@@ -1,0 +1,7 @@
+@import './base.css';
+
+body,
+#app {
+  align-content: center;
+  width: 100vw;
+}
