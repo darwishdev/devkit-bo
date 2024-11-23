@@ -1,8 +1,10 @@
 import './assets/main.css'
+import 'primeicons/primeicons.css'
 import config from './pkg/plugins/formkit/formkit.config'
 import { plugin, defaultConfig } from '@formkit/vue'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import DialogService from 'primevue/dialogservice';
 import queryClient from './pkg/plugins/tanstack/config'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import PrimeVue from 'primevue/config';
@@ -18,7 +20,9 @@ app.use(createPinia())
     theme: {
       preset: Aura
     }
-  }).use(VueQueryPlugin, {
+  })
+  .use(DialogService)
+  .use(VueQueryPlugin, {
     queryClient
   })
 
