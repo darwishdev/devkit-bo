@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import DynamicDialog from 'primevue/dynamicdialog';
-
+import Toast from 'primevue/toast';
 </script>
 <template>
   <Suspense>
@@ -12,4 +12,5 @@ import DynamicDialog from 'primevue/dynamicdialog';
     </template>
   </Suspense>
   <DynamicDialog />
+  <Toast />
 </template>

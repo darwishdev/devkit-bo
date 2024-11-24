@@ -2,15 +2,15 @@
 import { h } from 'vue';
 import { Button, type ButtonProps } from 'primevue';
 import AppIcon from './AppIcon.vue';
-const props = defineProps<{ ctx: ButtonProps }>()
+const props = defineProps<ButtonProps>()
 const renderIcon = () => {
   return h(
-    Button, props.ctx,
+    Button, props,
     {
       icon: () =>
-        props.ctx.icon ? h(AppIcon, {
-          icon: props.ctx.icon,
-          size: props.ctx.size,
+        props.icon ? h(AppIcon, {
+          icon: props.icon,
+          size: props.size,
         }) : undefined,
     }
   );

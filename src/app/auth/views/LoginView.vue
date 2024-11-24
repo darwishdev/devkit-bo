@@ -2,8 +2,20 @@
 import { apiClient } from '@/pkg/api/ApiClient';
 import { type AuthLoginResponse } from '@buf/ahmeddarwish_devkit-api.bufbuild_es/devkit/v1/accounts_auth_pb';
 import { FormKitSchema } from '@formkit/vue'
+import { useToast } from 'primevue';
+import { onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 const { push } = useRouter()
+const toast = useToast()
+onBeforeMount(() => {
+  const token = localStorage.getItem("token")
+  if (token) {
+    apiClient.authAuthorize({}).then((_) => {
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Please logout first before try to login again', life: 3000 });
+      push({ name: "home_view" })
+    })
+  }
+})
 const sc = [
   {
     $formkit: 'text',

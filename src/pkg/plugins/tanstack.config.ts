@@ -7,7 +7,7 @@ const localStoragePersistor = {
   },
   restoreClient: async () => {
     const cache = localStorage.getItem('tanstack-query-cache')
-    return undefined
+    //return undefined
     return cache ? JSON.parse(cache) : undefined
   },
   removeClient: async () => {
