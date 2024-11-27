@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<AppIconProps>(), {
 const slots = defineSlots<AppIconSlots>();
 const loadIcon = async (): Promise<string> => {
   return new Promise((resolve) => {
-    db.icons.get(props.icon).then((icon?: Icon) => {
+    db.icon.get(props.icon).then((icon?: Icon) => {
       if (!icon) {
         resolve(`not found`)
         return

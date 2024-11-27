@@ -10,6 +10,7 @@ import PrimeVue from 'primevue/config';
 import App from './App.vue'
 import ToastService from 'primevue/toastservice'
 import router from './pkg/router/router'
+import { createI18n } from 'vue-i18n'
 import Aura from '@primevue/themes/aura';
 const app = createApp(App)
 app.use(createPinia())
@@ -17,10 +18,19 @@ app.use(createPinia())
   .use(plugin, defaultConfig(config))
   .use(PrimeVue, {
     theme: {
-      preset: Aura
+      preset: Aura,
+      options: {
+        prefix: 'p',
+        darkModeSelector: '.my-app-dark',
+        cssLayer: false
+      }
     }
   })
   .use(DialogService)
+  .use(createI18n({
+    locale: 'en',
+    fallbackLocale: 'en'
+  }))
   .use(ToastService)
   .use(VueQueryPlugin, {
     queryClient

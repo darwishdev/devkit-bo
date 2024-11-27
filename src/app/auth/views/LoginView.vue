@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { apiClient } from '@/pkg/api/ApiClient';
-import { type AuthLoginResponse } from '@buf/ahmeddarwish_devkit-api.bufbuild_es/devkit/v1/accounts_auth_pb';
+import AppForm from '@/pkg/forms/AppForm.vue';
+import type { AppFormProps } from '@/pkg/forms/types';
 import { FormKitSchema } from '@formkit/vue'
 import { useToast } from 'primevue';
 import { onBeforeMount } from 'vue';
@@ -16,33 +17,54 @@ onBeforeMount(() => {
     })
   }
 })
-const sc = [
-  {
-    $formkit: 'text',
-    name: 'email',
-    label: 'Email',
-    help: 'This will be used for your account.',
-    validation: 'required|email',
-  },
-  {
-    $formkit: 'password',
-    name: 'password',
-    label: 'Password',
-    help: 'Enter your new password.',
-    validation: 'required|length:5,16',
-  }
-]
-const submitHandler = (req: any) => {
-  apiClient.authLogin({ loginCode: req.email, userPassword: req.password }).then((resp: AuthLoginResponse) => {
-    if (resp.loginInfo) {
-      localStorage.setItem("token", resp.loginInfo.accessToken)
-      localStorage.setItem("user", JSON.stringify(resp.user))
-      localStorage.setItem("navigation_bar", JSON.stringify(resp.navigationBar))
-      push("/dashboard")
-    }
-  }).catch(() => {
 
-  })
+const formProps: AppFormProps<any, any> = {
+  context: {
+    title: 'login',
+    options: {
+      isBulkCreateHidden: true,
+      isFormTransparent: false,
+      isSuccessNotificationHidden: false,
+      successMessageSummary: 'logged_in',
+      successMessageDetail: 'logged_in_details',
+      isHeaderSubmitHidden: true
+    },
+    submitHandler: {
+      endpoint: apiClient.authLogin
+      //endpoint: loginHandler.loginEndpoint,
+      //callback: handleLoginCallback,
+      //redirectRoute: loginHandler.redirectRoute || "home_view"
+    },
+    sections: {
+      'login': {
+        isTitleHidden: true,
+        isTransparent: true,
+        inputs: [
+          {
+            $formkit: 'text',
+            prefixIcon: "email",
+            outerClass: "col-12",
+            validation: "required:email",
+            name: "email",
+            placeholder: "email",
+            label: "email"
+          },
+          {
+            $formkit: 'password',
+            prefixIcon: "password",
+            if: "$isResetPassword == false",
+            outerClass: "col-12",
+            validation: "required",
+            name: "password",
+            placeholder: "password",
+            label: "password"
+          },
+
+        ]
+      }
+    }
+
+  }
 }
 </script>
 <template>
@@ -51,9 +73,7 @@ const submitHandler = (req: any) => {
     <div class="login-content">
       <h2>login</h2>
       <div class="login-form">
-        <FormKit type="form" @submit="submitHandler">
-          <FormKitSchema :schema="sc" />
-        </FormKit>
+        <AppForm :context="formProps.context" />
       </div>
     </div>
   </div>
@@ -61,7 +81,6 @@ const submitHandler = (req: any) => {
 <style>
 .login-view {
   display: flex;
-
   align-items: center;
   justify-content: center;
 }

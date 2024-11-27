@@ -1,11 +1,13 @@
 
 import { createRouter, createWebHistory, type RouteLocationNormalized, type NavigationGuardNext } from 'vue-router'
-import AppLayout from '../../pkg/components/AppLayout.vue';
-import dashboardRoutes from '../../app/dashboard/routes';
+import AppLayout from '@/pkg/components/AppLayout.vue';
+import dashboardRoutes from '@/app/dashboard/routes';
+import accountsRoutes from '@/app/accounts/routes';
 import LoginView from '../../app/auth/views/LoginView.vue'
 
 const appRoutes = [
   ...dashboardRoutes,
+  ...accountsRoutes,
 ]
 
 const router = createRouter({

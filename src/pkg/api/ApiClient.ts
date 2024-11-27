@@ -3,7 +3,7 @@ import { createConnectTransport } from "@connectrpc/connect-web";
 import { DevkitService } from "@buf/ahmeddarwish_devkit-api.bufbuild_es/devkit/v1/devkit_service_pb"
 import { type Interceptor } from "@connectrpc/connect";
 import type { ApiFormError } from "../types/types";
-
+import { Code } from "@connectrpc/connect";
 const interceptor: Interceptor = (next) => async (req) => {
   try {
     const token = localStorage.getItem("token") as string
@@ -15,16 +15,16 @@ const interceptor: Interceptor = (next) => async (req) => {
       globalErrors: [],
       fieldErrors: {}
     }
-    if (error.code == 6) {
+    console.log("eror code", error.code)
+    if (error.code == Code.AlreadyExists) {
       err.fieldErrors[error.rawMessage] = `${error.rawMessage}Unique`
       console.log("field error")
       throw new Error(JSON.stringify(err));
     }
-    if (error.code == 13) {
-      err.globalErrors = [`${error.rawMessage}`]
-      throw new Error(JSON.stringify(err));
-    }
-    throw new Error(JSON.stringify(err));
+    err.globalErrors = [`${error.rawMessage}`]
+    const errStr = JSON.stringify(err)
+    console.log("error is ", errStr)
+    throw new Error(errStr);
   }
 }
 const transport = createConnectTransport({
