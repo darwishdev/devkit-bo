@@ -9,6 +9,7 @@ import Menu from 'primevue/menu';
 import { useI18n } from 'vue-i18n';
 import AppBtn from './AppBtn.vue';
 import { apiClient } from '../api/ApiClient';
+import AppIcon from './AppIcon.vue';
 
 const menu = ref();
 const items = ref([

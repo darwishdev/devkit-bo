@@ -80,7 +80,6 @@ const submitHandler = (req: any, node: FormKitNode) => {
 <style>
 .login-view {
   display: flex;
-
   align-items: center;
   justify-content: center;
 }

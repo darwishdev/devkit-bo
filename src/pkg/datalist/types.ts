@@ -1,6 +1,7 @@
 import type { FormKitSchemaNode } from '@formkit/core'
 import type { VNode } from "vue"
 import type { ColumnProps } from 'primevue/column'
+import type { CallOptions } from '@connectrpc/connect'
 
 type CreateHandler = {
   title: string
@@ -10,6 +11,11 @@ type CreateHandler = {
 }
 
 
+export type DataListWrapperProps = {
+  records: Array<any>; // Adjust this type based on your data structure
+  selection: any; // Adjust type if you have a specific selection type
+  onSelectionUpdate: (selection: any) => void; // Callback type
+}
 
 type UpdateHandler = {
   title: string
@@ -30,10 +36,10 @@ type ImportHandler = {
   importTemplateLink: string
 }
 
-export type TableRouter = {
+export type TableRouter<TRecord> = {
   name: string,
   paramName: string,
-  paramColumnName: string
+  paramColumnName: keyof TRecord
 }
 export type ApiListOptions = {
   title: string
@@ -44,23 +50,19 @@ export type ApiListOptions = {
   importHandler?: ImportHandler
 }
 
-export interface ITableHeaderProps {
+export interface ITableHeaderProps<TRecord> {
   sortable: boolean,
   editInput?: FormKitNodeInput
   isGlobalFilter?: boolean
   filter?: AppTableFilter
-  router?: TableRouter
+  router?: TableRouter<TRecord>
 }
 export type ApiResponseList<TRecord> = {
   records: TRecord[]
   deletedRecords?: TRecord[]
   options?: ApiListOptions
 }
-export type tableFetchFn<TResp, TRecord> =
-  (req: any, options?: any) => Promise<
-    TResp extends ApiResponseList<TRecord>
-    ? TResp
-    : undefined>
+export type tableFetchFn<TReq, TRecord> = (req: TReq, options?: CallOptions) => Promise<ApiResponseList<TRecord>>
 
 
 export type AppTableFilterInputs = Record<string, FormKitSchemaNode>
@@ -78,13 +80,13 @@ export type FormKitNodeInput = {
   name?: string
   placeholder?: string
 }
-export interface ITableHeader {
+export interface ITableHeader<TRecord> {
   columnProps?: ColumnProps
   filter?: AppTableFilter
-  tableRouter?: TableRouter
+  tableRouter?: TableRouter<TRecord>
   editInput?: FormKitNodeInput
   isGlobalFilter?: boolean
-  renderHtml?: (value: any) => VNode
+  renderHtml?: (value: TRecord) => VNode
 }
 
 export type AppFormSection = {
@@ -92,20 +94,20 @@ export type AppFormSection = {
   isTitleHidden?: boolean
   isTransparent?: boolean
 }
-export interface DataListProps<TResp, TRecord> {
+export interface DataListProps<TReq, TRecord> {
   context: {
     title: string
     dataKey: keyof TRecord
     exportable?: boolean
     initiallySelectedItems?: any[],
-    fetchFn?: tableFetchFn<TResp, TRecord>
+    fetchFn?: tableFetchFn<TReq, TRecord> | string
     records: TRecord[]
     deletedRecords?: TRecord[]
-    viewRouter?: TableRouter
+    viewRouter?: TableRouter<TRecord>
     options: ApiListOptions
     displayType?: 'card' | 'table'
     formSections?: Record<string, (AppFormSection | FormKitSchemaNode[])>
-    headers: Record<string, ITableHeader>
+    headers: Record<string, ITableHeader<TRecord>>
   }
 
 }

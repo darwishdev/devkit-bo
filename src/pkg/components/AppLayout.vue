@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'primevue';
 import { useI18n } from 'vue-i18n';
 import { translationList, type SUPPORTE_LOCALES_TYPE } from '../plugins/i18n.config';
+import { provide } from 'vue';
 const i18n = useI18n()
 const { push } = useRouter()
 const toast = useToast()

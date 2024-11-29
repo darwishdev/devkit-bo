@@ -2,7 +2,7 @@
 import { apiClient } from '@/pkg/api/ApiClient';
 import AppForm from '@/pkg/forms/AppForm.vue';
 import type { AppFormProps } from '@/pkg/forms/types';
-import { FormKitSchema } from '@formkit/vue'
+import type { AuthLoginResponse } from '@buf/ahmeddarwish_devkit-api.bufbuild_es/devkit/v1/accounts_auth_pb';
 import { useToast } from 'primevue';
 import { onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
@@ -17,7 +17,14 @@ onBeforeMount(() => {
     })
   }
 })
-
+const handleLoginCallback = (response: AuthLoginResponse) => {
+  if (!response.loginInfo) {
+    throw new Error("login info is missing")
+  }
+  localStorage.setItem("token", response.loginInfo.accessToken)
+  localStorage.setItem("user", JSON.stringify(response.user))
+  localStorage.setItem("navigation_bar", JSON.stringify(response.navigationBar))
+}
 const formProps: AppFormProps<any, any> = {
   context: {
     title: 'login',
@@ -30,10 +37,9 @@ const formProps: AppFormProps<any, any> = {
       isHeaderSubmitHidden: true
     },
     submitHandler: {
-      endpoint: apiClient.authLogin
-      //endpoint: loginHandler.loginEndpoint,
-      //callback: handleLoginCallback,
-      //redirectRoute: loginHandler.redirectRoute || "home_view"
+      endpoint: apiClient.authLogin,
+      callback: handleLoginCallback,
+      redirectRoute: "home_view"
     },
     sections: {
       'login': {
@@ -45,17 +51,16 @@ const formProps: AppFormProps<any, any> = {
             prefixIcon: "email",
             outerClass: "col-12",
             validation: "required:email",
-            name: "email",
+            name: "loginCode",
             placeholder: "email",
             label: "email"
           },
           {
             $formkit: 'password',
             prefixIcon: "password",
-            if: "$isResetPassword == false",
             outerClass: "col-12",
             validation: "required",
-            name: "password",
+            name: "userPassword",
             placeholder: "password",
             label: "password"
           },

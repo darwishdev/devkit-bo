@@ -1,5 +1,5 @@
 import 'primeicons/primeicons.css'
-import config from './pkg/plugins/formkit.config'
+import config from '../formkit.config'
 import { plugin, defaultConfig } from '@formkit/vue'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -11,8 +11,10 @@ import App from './App.vue'
 import ToastService from 'primevue/toastservice'
 import router from './pkg/router/router'
 import { createI18n } from 'vue-i18n'
+import { apiClient } from './pkg/api/ApiClient';
 import Aura from '@primevue/themes/aura';
 const app = createApp(App)
+app.provide('apiClient', apiClient)
 app.use(createPinia())
   .use(router)
   .use(plugin, defaultConfig(config))

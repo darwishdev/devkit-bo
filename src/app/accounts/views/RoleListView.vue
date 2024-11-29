@@ -64,7 +64,7 @@ const tableProps: DataListProps<RoleListRequest, AccountsSchemaRole> = {
     deletedRecords: deletedRecords,
     // viewRouter: viewRouter,
     displayType: "card",
-    fetchFn: apiClient.roleList as any,
+    fetchFn: apiClient.roleList,
     options: options! as any,
     headers
   }
