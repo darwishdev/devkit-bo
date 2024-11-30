@@ -12,21 +12,16 @@ import ToastService from 'primevue/toastservice'
 import router from './pkg/router/router'
 import { createI18n } from 'vue-i18n'
 import { apiClient } from './pkg/api/ApiClient';
-import Aura from '@primevue/themes/aura';
+import "./pkg/styles/style.css";
+import "./pkg/styles/base.css";
+// import Aura from '@primevue/themes/aura';
 const app = createApp(App)
 app.provide('apiClient', apiClient)
 app.use(createPinia())
   .use(router)
   .use(plugin, defaultConfig(config))
   .use(PrimeVue, {
-    theme: {
-      preset: Aura,
-      options: {
-        prefix: 'p',
-        darkModeSelector: '.my-app-dark',
-        cssLayer: false
-      }
-    }
+    theme: 'none'
   })
   .use(DialogService)
   .use(createI18n({
