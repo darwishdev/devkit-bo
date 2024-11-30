@@ -16,7 +16,7 @@ export const CreateBtn = h(AppBtn, {
   label: "create"
 })
 export const UpdateBtn = h(AppBtn, {
-  icon: "pencil",
+  icon: "edit",
   class: "update",
   label: "update"
 })

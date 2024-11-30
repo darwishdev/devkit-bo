@@ -15,7 +15,7 @@ const viewRouter: TableRouter = {
   paramName: "id",
   paramColumnName: dataKey
 }
-const headers: Record<string, ITableHeader> = {
+const headers: Record<string, ITableHeader<AccountsSchemaRole>> = {
   'roleId': new TableHeaderText('roleId', {
     sortable: true,
     isGlobalFilter: true,
@@ -57,13 +57,14 @@ const headers: Record<string, ITableHeader> = {
 
 const tableProps: DataListProps<RoleListRequest, AccountsSchemaRole> = {
   context: {
+    key: 'role',
     title: "roles",
     dataKey: "roleId",
     records: records,
     exportable: true,
     deletedRecords: deletedRecords,
     // viewRouter: viewRouter,
-    displayType: "card",
+    //displayType: "card",
     fetchFn: apiClient.roleList,
     options: options! as any,
     headers
