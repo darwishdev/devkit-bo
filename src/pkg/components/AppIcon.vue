@@ -59,6 +59,7 @@ const modifySvgAttributes = (svgString: string) => {
 const renderIcon = () => {
   const componentVariants = {
     'primevue': h('span', {
+      key: data.value,
       class: `pi pi-${data.value}`,
       style: {
         fontSize: sizes[props.size],

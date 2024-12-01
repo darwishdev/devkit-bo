@@ -96,6 +96,7 @@ export type AppFormSection = {
 }
 export interface DataListProps<TReq, TRecord> {
   context: {
+    key: string,
     title: string
     dataKey: keyof TRecord
     exportable?: boolean

@@ -1,9 +1,8 @@
 import { useDataListStoreWithKey } from "@/pkg/stores/datalist_store"
-import { Column, Menu, type ColumnSlots, type MenuMethods } from "primevue"
+import { Column, Menu } from "primevue"
 import { ref, defineComponent, h, type VNode } from "vue"
 import { UpdateBtn, ViewBtn } from "./BtnsRenderer"
 import AppBtn from "@/pkg/components/AppBtn.vue"
-import type { ITableHeader } from "../types"
 import { ObjectKeys } from "@/pkg/objectutils/ObjectUtils"
 
 export const renderSelectAllColumn = h(Column, {
@@ -31,6 +30,10 @@ export interface ActionsColumnSlots<TRecord> {
 }
 const actionsColumn = <TRecord>(dataListKey: string, data: TRecord) => defineComponent({
   setup(_: unknown, { slots }: { slots: ActionsColumnSlots<TRecord> }) {
+    if (slots.actions) {
+      return slots.actions({ data })
+    }
+    console.log("data is ", dataListKey)
     const store = useDataListStoreWithKey(dataListKey)
     const { updateHandler, deleteRestoreHandler } = store.currentTableOptions
     const actionsMenuElementRef = ref()
@@ -41,12 +44,13 @@ const actionsColumn = <TRecord>(dataListKey: string, data: TRecord) => defineCom
     const updateBtn = updateHandler ? h(UpdateBtn, {
       onClick: store.updateRecord
     }) : undefined
+    const variant = store.deleteRestoreVaraints
     const deleteRestoreBtn = deleteRestoreHandler ? h(AppBtn, {
-      icon: 'trash',
-      class: "w-full transparent",
-      label: "delete",
+      ...variant,
+      disabled: false,
       onClick: () => {
-        console.log("delete me")
+        store.modelSelectionRef.push(data)
+        store.deleteRestoreRecords()
       }
     }) : undefined
     console.log("data", data, viewBtn, updateBtn, deleteRestoreBtn)
@@ -91,30 +95,3 @@ export const RenderActionsColumn = <TRecord>(dataListKey: string) => h(actionsCo
   body: (context: { data: TRecord }) => h(actionsColumn(dataListKey, context.data))
 })
 
-
-export const renderColumns = <TRecord>(dataListKey: string, headers: Record<string, ITableHeader<TRecord>>, slots: Record<string, VNode>) => {
-  console.log("rendeing columns")
-  //const selectAllColumn = renderSelectAllColumn()
-  const columns: VNode[] = []
-  for (let dataHeaderKey in headers) {
-    const dataHeader = headers[dataHeaderKey]
-    const isSlotPassed = ObjectKeys(slots).includes(`items.${dataHeaderKey}`)
-    let columnSlots: Partial<ColumnSlots> | null = null
-    if (typeof dataHeader.renderHtml == 'function') {
-      const renderFunc = dataHeader.renderHtml
-      columnSlots = {
-        body: ({ data }) => [renderFunc(data)],
-      }
-    }
-    const bodySlot = isSlotPassed ? slots[`items.${dataHeaderKey}`] : columnSlots ? columnSlots.body : undefined
-    const columnNode = h(Column, {
-      field: dataHeaderKey,
-      header: dataHeaderKey,
-      filterField: dataHeaderKey,
-    }, { body: bodySlot })
-    columns.push(columnNode)
-  }
-  const actionsColumn = RenderActionsColumn(dataListKey)
-  if (actionsColumn) columns.push(actionsColumn)
-  return columns
-}

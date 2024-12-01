@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { h } from 'vue';
-
+import { h, useAttrs } from 'vue';
 import type { HintedString } from '@primevue/core';
 import { Button } from 'primevue';
 import AppIcon from './AppIcon.vue';
@@ -31,9 +30,10 @@ export interface ButtonProps {
   unstyled?: boolean;
 }
 const props = defineProps<ButtonProps>()
+const attrs = useAttrs();
 const renderIcon = () => {
   return h(
-    Button, props,
+    Button, { ...attrs, ...props },
     {
       icon: () =>
         props.icon ? h(AppIcon, {

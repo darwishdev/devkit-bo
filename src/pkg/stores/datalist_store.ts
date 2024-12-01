@@ -5,6 +5,7 @@ import type { ApiListOptions, AppFormSection, DataListProps, tableFetchFn, Table
 import { useRouter } from 'vue-router'
 import { useDialog, type DataTableMethods } from 'primevue'
 import AppDialog from '../components/AppDialog.vue'
+import { subtractRecords } from '../objectutils/ObjectUtils'
 
 export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineStore(`datalist-${dataLisKey}`, () => {
   //const { options,  records, deletedRecords, dataKey, formSections, fetchFn, initiallySelectedItems  } = props.context
@@ -14,6 +15,7 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
   let currentViewRouter: TableRouter<TRecord> | undefined
   let currentTableFetchFn: tableFetchFn<TReq, TRecord> | undefined
   const recordsRef = ref<TRecord[]>([])
+  const isLoadingRef = ref(false)
   const tableElementRef = ref<DataTableMethods>()
   const deletedRecordsRef = ref<TRecord[]>([])
   const isShowDeletedRef = ref(false)
@@ -22,8 +24,10 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
   const { push } = useRouter()
   const dialog = useDialog()
   const deleteRestoreVaraints = computed(() => {
-    if (isShowDeletedRef.value) return { icon: 'replay', label: 'restore', empty: "empty_records_deleted" }
-    return { icon: 'trash', lafile_upload: 'delete', empty: "empty_records" }
+    const hasDeletedRecords = deletedRecordsRef.value.length > 0
+    const hasSelectedData = modelSelectionRef.value.length > 0
+    if (isShowDeletedRef.value) return { hasSelectedData, hasDeletedRecords, icon: 'replay', label: 'restore', empty: "empty_records_deleted" }
+    return { disabled: !hasSelectedData, hasDeletedRecords, icon: 'trash', label: 'delete', empty: "empty_records" }
   })
   const currentData = computed(() => {
     if (isShowDeletedRef.value) return deletedRecordsRef.value
@@ -91,18 +95,36 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
     }
     const deleteRestoreRequest: Record<string, unknown> = {}
     const requestProperty = handler.requestProperty || "records"
+
     deleteRestoreRequest[requestProperty] = modelSelectionRef.value.map((row: any) => {
       return row[currentTableDataKey]
     })
+
+    console.log(deleteRestoreRequest)
     const deleteEndpointFn = apiClient[handler.endpoint]
     deleteEndpointFn(deleteRestoreRequest).then((response: unknown) => {
+      const records = recordsRef.value as TRecord[]
+      const deletedRecords = deletedRecordsRef.value as TRecord[]
+      const selectedRecords = modelSelectionRef.value as TRecord[]
+      if (isShowDeletedRef.value) {
+        recordsRef.value = [...records, ...selectedRecords]
+        deletedRecordsRef.value = subtractRecords<TRecord>(deletedRecords, selectedRecords, currentTableDataKey)
+        if (deletedRecordsRef.value.length == 0) {
+          isShowDeletedRef.value = false
+        }
+        modelSelectionRef.value = []
+        dialogRef.close()
+        return
+
+      }
+      recordsRef.value = subtractRecords<TRecord>(records, selectedRecords, currentTableDataKey)
+      if (recordsRef.value.length == 0) {
+        isShowDeletedRef.value = true
+      }
       modelSelectionRef.value = []
-      recordsRef.value = []
-      console.log("response", response)
+      deletedRecordsRef.value = [...deletedRecords, ...selectedRecords]
       dialogRef.close()
     })
-
-
   }
   const deleteRestoreRecords = () => {
     const dialogProps = {
@@ -127,8 +149,11 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
     currentData,
     currentTableOptions,
     updateRecord,
+    isShowDeletedRef,
     init,
     viewRecord,
+    isLoadingRef,
+    modelSelectionRef,
     exportRecords
   }
 })

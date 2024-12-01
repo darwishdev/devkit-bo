@@ -11,7 +11,8 @@ import { type ColumnProps } from 'primevue/column';
 export class TableHeaderBase {
   columnProps: ColumnProps = {}
   columnName: string
-  tableRouter?: TableRouter
+  tableRouter?: TableRouter<unknown>
+
   editInput?: FormKitNodeInput
   isGlobalFilter: boolean
   filter?: AppTableFilter
