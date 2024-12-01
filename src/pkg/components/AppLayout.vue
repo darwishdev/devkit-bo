@@ -76,11 +76,15 @@ await loadIcons()
 <template>
   <Suspense>
     <template #default>
-      <div>
-        <h2 @click="toggleLanguage">app layout goes here</h2>
-        <AppHeader />
+      <div class="page-layout">
+        <!-- <h2 @click="toggleLanguage">app layout goes here</h2> -->
         <AppNavigation />
-        <RouterView />
+        <div class="page-wrapper">
+          <AppHeader />
+          <div class="page-content">
+            <RouterView />
+          </div>
+        </div>
       </div>
     </template>
     <template #fallback>
@@ -88,3 +92,21 @@ await loadIcons()
     </template>
   </Suspense>
 </template>
+<style>
+.page-wrapper{
+  padding: 20px;
+}
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+@media (min-width: 676px) {
+  .page-layout {
+    padding-inline-start: var(--menu-width);
+  }
+}
+.page-content{
+  padding: 25px 0;
+}
+</style>

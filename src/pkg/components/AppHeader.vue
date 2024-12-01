@@ -45,7 +45,7 @@ const route = useRoute()
 const i18n = useI18n()
 const router = useRouter()
 const breadcrumbHome = {
-  icon: 'house',
+  icon: 'home',
   to: { name: "home_view" },
 }
 const toggleTheme = () => {
@@ -78,7 +78,7 @@ const breadcrumbs = computed<MenuItem[]>(() => {
 });
 </script>
 <template>
-  <header>
+  <header class="app-nav">
     <div class="header-start">
       <Breadcrumb :home="breadcrumbHome" :model="breadcrumbs" v-if="breadcrumbs.length > 0">
         <template #item="{ item, props }">
@@ -101,3 +101,69 @@ const breadcrumbs = computed<MenuItem[]>(() => {
     </div>
   </header>
 </template>
+
+<style>
+.app-nav {
+  padding: 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  border: 2px solid var(--color-card);
+  border-radius: 10px;
+}
+.header-start {
+  margin-inline-start: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.header-end {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  text-align: end;
+  gap: 8px;
+  margin-inline-end: 20px;
+}
+.p-breadcrumb{
+  background-color: transparent !important;
+}
+.p-breadcrumb-list .p-menuitem-link.router-link-active {
+  background-color: transparent !important;
+}
+.p-breadcrumb a , .p-breadcrumb li , .p-breadcrumb span {
+  color: var(--p-text-color) !important;
+  font-size: 19px;
+}
+@media screen and (max-width: 676px) {
+  .app-nav{
+    padding: 10px;
+  }
+  .app-nav .p-breadcrumb {
+      display: none;
+  }
+
+  .app-nav .logo-container {
+      margin: 0;
+  }
+
+  .app-nav .header-end {
+      min-width: auto;
+  }
+}
+@media screen and (min-width: 676px) {
+   .header-end {
+      min-width: 200px;
+  }
+}
+@media screen and (min-width: 992px) {
+  .app-nav .sidebar-toggler {
+    display: none;
+  }
+
+  .app-nav .logo-container {
+      display: none !important;
+  }
+}
+</style>

@@ -28,11 +28,9 @@ const interceptor: Interceptor = (next) => async (req) => {
   }
 }
 const transport = createConnectTransport({
-  baseUrl: "http://192.168.1.40:9090",
+  baseUrl: "http://darwishz4.duckdns.org:9090/",
   useHttpGet: true,
   interceptors: [interceptor]
 });
 
 export const apiClient = createClient(DevkitService, transport);
-
-

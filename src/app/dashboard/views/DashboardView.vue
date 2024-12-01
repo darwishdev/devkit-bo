@@ -27,6 +27,5 @@ const { data, suspense } = useQuery({
 await suspense()
 </script>
 <template>
-  <h2>{{ $t('customer_address') }}</h2>
   <AppBtn label="show toast" @click="showProducts" />
 </template>

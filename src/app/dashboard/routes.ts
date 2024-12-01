@@ -6,7 +6,7 @@ export default
       name: 'home_view',
       meta: {
         loadingType: 'dashboard',
-        breadcrumbs: [{ label: "dashboard", icon: "home", to: { name: 'home_view' } }],
+        breadcrumbs: [{ label: "dashboard", icon: "chart-bar", to: { name: 'home_view' } }],
       },
       component: DashboardView
     },

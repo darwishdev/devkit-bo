@@ -1,0 +1,207 @@
+a,span{
+    color: var(--p-primary-contrast-color);
+  }
+  .p-panelmenu
+    .p-panelmenu-header
+    .p-panelmenu-header-content
+    .p-panelmenu-header-action {
+    color: var(--color-white);
+  }
+  .p-panelmenu .p-toggleable-content {
+    background-color: var(--color-card);
+  }
+  .p-panelmenu .p-panelmenu-content {
+    border: none !important;
+    background: var(--color-card);
+    width: 100%;
+  }
+  .p-panelmenu .p-menuitem-link {
+    color: var(--color-secondary);
+  }
+  
+  .p-panelmenu
+    .p-panelmenu-header
+    .p-panelmenu-header-content
+    .p-panelmenu-header-action {
+    padding: 8px 10px;
+  }
+  
+  .p-panelmenu{
+    gap: 0rem !important;
+  }
+  
+  .p-panelmenu-item-content:hover{
+    background-color: rgba(255, 255, 255, 0.150) !important;
+  }
+  .p-panelmenu-header:hover{
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.150) !important;
+  }
+  
+  .p-menuitem {
+    margin: 10px;
+  }
+  .p-submenu-icon {
+    order: 2;
+  }
+  .p-menuitem-text {
+    flex: 1;
+  }
+  .p-panelmenu .p-panelmenu-header .material-symbols-outlined {
+    margin-inline-end: 20px;
+  }
+  
+  .p-panelmenu .p-menuitem .material-symbols-outlined {
+    margin-inline-end: 15px;
+    font-size: 40px;
+  }
+  .p-panelmenu .p-panelmenu-header .p-panelmenu-header-content {
+    border: none;
+    outline: none !important;
+    border-radius: 6px;
+    box-shadow: none !important;
+    background: transparent !important;
+    transition: box-shadow 0.2s;
+    border-radius: 6px;
+  }
+  
+  .p-panelmenu-header-action {
+    outline: none !important;
+  }
+  .desktop-menu {
+    background: var(--p-background-color);
+    z-index: 3;
+    transition: width 0.2s;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--menu-width);
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-right: 1px solid rgba(22, 22, 22, .85);
+    position: fixed;
+    border-radius: 0 15px 15px 0;
+  }
+  @media (max-width: 676px) {
+    .desktop-menu {
+      display: none;
+    }
+  }
+  .desktop-menu .p-panelmenu {
+    margin-top: 30px;
+    padding: 0 15px;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel .p-toggleable-content {
+    width: 100%;
+  }
+  .p-panelmenu-content-container{
+    width: 100%;
+  }
+  .p-panelmenu-submenu{
+    padding: 0 !important;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel .p-toggleable-content .p-menuitem-content {
+    border-radius: 6px !important;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel .p-toggleable-content .p-menuitem-link {
+    padding: 5px 0;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel .p-panelmenu-header {
+    width: 100%;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel .p-panelmenu-header-active {
+    background: var(--p-primary-color) !important;
+    color: var(--p-primary-contrast-color);
+    border-radius: 6px;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel .p-panelmenu-header.p-highlight span, .desktop-menu .p-panelmenu .p-panelmenu-panel .p-panelmenu-header.p-highlight svg {
+    color: #fff !important;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-content {
+    display: flex;
+    text-align: left;
+    justify-content: center;
+    align-items: center;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action {
+    padding: 10px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action .material-symbols-outlined {
+    transition: all 0.3s;
+    margin: 0;
+    font-size: 30px;
+  }
+  .desktop-menu .p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action .p-menuitem-text, .desktop-menu .p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action .p-submenu-icon {
+    margin-right: 20px;
+    transition: all 0.3s;
+    position: absolute;
+    opacity: 0;
+  }
+  .desktop-menu .desktop-menu-header {
+    margin: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .desktop-menu .desktop-menu-header .all-logo {
+    display: none !important;
+  }
+  .desktop-menu .desktop-menu-header .logo-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .desktop-menu .desktop-menu-toggler {
+    display: none;
+  }
+  
+  .material-symbols-outlined {
+    font-size: 30px;
+  }
+  
+  .app-layout .desktop-menu:hover, .app-layout.active-menu {
+    --menu-width: var(--menu-width-opened);
+  }
+  .app-layout .desktop-menu:hover .all-logo, .app-layout.active-menu .all-logo {
+    display: flex !important;
+  }
+  .app-layout .desktop-menu:hover .p-panelmenu-header-content span , .app-layout .desktop-menu:hover .p-panelmenu-item-content span {
+    display: flex !important;
+  }
+  .app-layout.active-menu span {
+    display: flex !important;
+  }
+  .app-layout svg {
+    fill: var(--p-primary-contrast-color) !important;
+  }
+  .app-layout .desktop-menu:hover .desktop-menu-header, .app-layout.active-menu .desktop-menu-header {
+    padding: 0 20px;
+  }
+  .app-layout .desktop-menu:hover .icon-logo, .app-layout.active-menu .icon-logo {
+    display: none !important;
+  }
+  .app-layout .desktop-menu:hover .desktop-menu-toggler, .app-layout.active-menu .desktop-menu-toggler {
+    display: block !important;
+  }
+  .app-layout .desktop-menu:hover .material-symbols-outlined, .app-layout.active-menu .material-symbols-outlined {
+    margin: 0 20px !important;
+    font-size: 30px;
+  }
+  .app-layout .desktop-menu:hover .p-menuitem-text, .app-layout .desktop-menu:hover .p-submenu-icon, .app-layout.active-menu .p-menuitem-text, .app-layout.active-menu .p-submenu-icon {
+    position: relative !important;
+    opacity: 1 !important;
+    margin-right: 20px;
+  }

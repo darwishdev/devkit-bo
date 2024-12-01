@@ -14,6 +14,6 @@ export default {
         '2xl': '1920px'
     }
   },
+  darkMode: ['selector', '[class*="my-app-dark"]'],
   plugins: [primeui],
 }
-

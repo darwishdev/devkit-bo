@@ -5,7 +5,7 @@ export default
       name: 'role_list',
       meta: {
         loadingType: 'card',
-        breadcrumbs: [{ label: "dashboard", icon: "home", to: { name: 'home_view' } }],
+        breadcrumbs: [{ label: "dashboard", icon: "chart-bar", to: { name: 'home_view' } }, { label: "Roles", icon: "single_user", to: { name: 'role_list' } }],
       },
       component: () => import('@/app/accounts/views/RoleListView.vue')
     },
@@ -14,7 +14,7 @@ export default
       name: 'role_create',
       meta: {
         loadingType: 'form',
-        breadcrumbs: [{ label: "dashboard", icon: "home", to: { name: 'home_view' } }, { label: "role", icon: "single_user", to: { name: 'role_list' } }],
+        breadcrumbs: [{ label: "dashboard", icon: "chart-bar", to: { name: 'home_view' } }, { label: "role", icon: "single_user", to: { name: 'role_list' } }],
       },
       component: () => import('@/app/accounts/views/RoleCreateView.vue')
     }
