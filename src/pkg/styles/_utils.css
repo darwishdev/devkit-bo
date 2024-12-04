@@ -1,0 +1,16 @@
+.transparent {
+    background-color: transparent !important;
+    border-color: transparent;
+}
+
+.glass {
+    background-color: var(--p-glass) !important;
+    backdrop-filter: blur(10px);
+    border-color: var(--p-glass-darker);
+}
+
+.glass-hover:hover {
+    background-color: var(--p-glass) !important;
+    backdrop-filter: blur(10px);
+    border-color: var(--p-glass);
+}

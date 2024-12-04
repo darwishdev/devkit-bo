@@ -1,62 +1,40 @@
 <script setup lang="ts">
-import { h, shallowRef, type VNode } from 'vue';
-import { type DataListProps } from './types';
+import { h, type VNode } from 'vue';
+import type { DataListEmits, DataListProps, DataListSlots } from './types';
 import { useDebounceFn } from '@vueuse/core'
 import DataTable from 'primevue/datatable';
 import { useDataListStoreWithKey } from '../stores/datalist_store';
-import { ObjectKeys } from '../objectutils/ObjectUtils';
-import { Column, ToggleSwitch, type ColumnSlots } from 'primevue';
-import { RenderActionsColumn, renderSelectAllColumn } from './columns/ColumnsRenderer';
+import { Column, ToggleSwitch } from 'primevue';
 import { CreateBtn, ExportBtn } from './columns/BtnsRenderer';
 import AppBtn from '../components/AppBtn.vue';
+import { RenderActionsColumn, renderSelectAllColumn } from './columns/ColumnsRenderer';
+import ColumnActions from './ColumnActions.vue';
 const props = defineProps<DataListProps<unknown, unknown>>()
+const slots = defineSlots<DataListSlots<unknown>>()
+const emit = defineEmits<DataListEmits<unknown>>();
 const dataListStore = useDataListStoreWithKey(props.context.key)
-await dataListStore.init(props)
-const emit = defineEmits<{
-  (e: 'update:selection', value: any[]): void
-}>();
-const slots = defineSlots<{
-  default(): VNode
-  start(props: { data: unknown }): VNode
-  end(props: { data: unknown }): VNode
-  expansion(props: { data: unknown }): VNode
+await dataListStore.init(props, slots)
+const renderColumnActions = () => {
+  return h(Column,
+    {
+      header: 'actions',
+      pt: {
+        headerCell: 'transparent'
+      },
+      class: 'actions-btns',
+      headerStyle: {
+        width: "1rem"
+      },
 
-  headerActionsStartPrepend(store: typeof dataListStore): VNode
-  headerActionsStartAppend(store: typeof dataListStore): VNode
-  headerActionsEndPrepend(store: typeof dataListStore): VNode
-  headerActionsEndAppend(store: typeof dataListStore): VNode
-  header(store: typeof dataListStore): VNode
-  actions(props: { data: unknown }): VNode
-  prependActions(props: { data: unknown }): VNode
-  appendActions(props: { data: any }): VNode
-} & any>()
-
-
-const renderColumns = (): VNode[] => {
-  const columns: VNode[] = []
-  const { headers } = props.context
-  for (let dataHeaderKey in headers) {
-    const currentDataHeader = headers[dataHeaderKey]
-    const isSlotPassed = ObjectKeys(slots).includes(`items.${dataHeaderKey}`)
-    let columnSlots: Partial<ColumnSlots> | null = null
-    if (typeof currentDataHeader.renderHtml == 'function') {
-      const renderFunc = currentDataHeader.renderHtml
-      columnSlots = {
-        body: ({ data }) => [renderFunc(data)],
-      }
+    },
+    {
+      body: slots.actions ? slots.actions : (context: { data: any }) => h(ColumnActions, {
+        data: context.data,
+        isDropdownMenu: true,
+        datalistKey: props.context.key
+      })
     }
-    const bodySlot = isSlotPassed ? slots[`items.${dataHeaderKey}`] : columnSlots ? columnSlots.body : undefined
-    const columnNode = h(Column, {
-      field: dataHeaderKey,
-      header: dataHeaderKey,
-      filterField: dataHeaderKey,
-    }, { body: bodySlot })
-    columns.push(columnNode)
-  }
-
-  const actionsColumn = RenderActionsColumn(props.context.key)
-  if (actionsColumn) columns.push(actionsColumn)
-  return columns
+  )
 }
 const renderHeader = (): VNode => {
   const startActions: VNode[] = []
@@ -121,7 +99,11 @@ const renderHeader = (): VNode => {
     }, endActions)
   ])
 }
-const currentDataColumns = renderColumns()
+const currentDataColumns = dataListStore.currentTableColumns.map((item) => h(Column, {
+  ...item.props, pt: {
+    headerCell: 'transparent',
+  }
+}, item.slots))
 const renderDataList = () => {
   console.log("props", props)
   console.log("rendere whole")
@@ -134,6 +116,12 @@ const renderDataList = () => {
       maxHeight: 200,
       paginator: true,
       loading: dataListStore.isLoadingRef,
+      pt: {
+        root: 'glass rounded-md p-md',
+        header: 'transparent',
+        bodyRow: 'transparent',
+      },
+      calss: 'data-list',
       selection: dataListStore.modelSelectionRef,
       "onUpdate:selection": (e: any) => {
         emit('update:selection', e)
@@ -143,8 +131,9 @@ const renderDataList = () => {
         "FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown",
     },
     {
-      default: () => [renderSelectAllColumn, ...currentDataColumns], // Replace with your computed columns logic
-      header: () => [renderHeader()], // Replace with your custom actions logic
+      default: () => [renderSelectAllColumn, ...currentDataColumns, renderColumnActions()],
+
+      header: () => [renderHeader()],
     }
   );
 }

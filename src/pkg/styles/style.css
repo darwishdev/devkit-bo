@@ -1,6 +1,8 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
-@import "./primevue/tailwind.css";
 @import "tailwindcss/utilities";
-@import "./datalist.css";
-@import "./appnav.css"
+@import "./primevue/tailwind";
+@import "./_base";
+@import "./_utils";
+@import "./_app_layout";
+@import "./_datalist";

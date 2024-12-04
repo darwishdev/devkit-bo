@@ -24,16 +24,23 @@
     --p-surface-900: #18181b;
     --p-surface-950: #09090b;
     --p-content-border-radius: 6px;
+    --p-content-padding: 1.25rem;
+
 }
 
 /* Light */
 :root {
-    --menu-width-opened: 19rem;
-    --menu-width-closed: 6.571em;
-    --menu-width: var(--menu-width-closed); 
-    --p-background-color : linear-gradient(180deg, #2e323f 0%, #0a061a 100%);
+    --p-header-height: 4rem;
+    --p-gap: 1rem;
+    --p-secondary-color: #0c4c60;
+    --p-glass: rgba(255, 255, 255, .05);
+    --p-menu-border-color: rgba(22, 22, 22, .85);
+    --p-glass-darker: rgba(0, 0, 0, .3);
+    --p-menu-width-opened: 19rem;
+    --p-menu-width-closed: 6.571em;
+    --p-menu-width: var(--p-menu-width-closed);
+    --p-background-color: linear-gradient(180deg, #2e323f 0%, #0a061a 100%);
     --p-primary-color: var(--p-primary-500);
-    --color-card: rgba(255, 255, 255, .05);
     --p-primary-contrast-color: var(--p-surface-0);
     --p-primary-hover-color: var(--p-primary-200);
     --p-primary-active-color: var(--p-primary-700);
@@ -60,29 +67,31 @@
 */
 /* @media (prefers-color-scheme: dark) { */
 :root[class="my-app-dark"] {
-        --p-primary-color: var(--p-primary-400);
-        --p-background-color : linear-gradient(180deg, #f6f9fc 0%, #ececf9 100%);
-        --p-primary-contrast-color: var(--p-surface-900);
-        --p-primary-hover-color: var(--p-primary-300);
-        --p-primary-active-color: var(--p-primary-200);
-        --p-content-border-color: var(--p-surface-700);
-        --p-content-hover-background: var(--p-surface-800);
-        --p-content-hover-color: var(--p-surface-0);
-        --p-highlight-background: color-mix(in srgb, var(--p-primary-400), transparent 84%);
-        --p-highlight-color: rgba(255, 255, 255, 0.87);
-        --p-highlight-focus-background: color-mix(in srgb, var(--p-primary-400), transparent 76%);
-        --p-highlight-focus-color: rgba(255, 255, 255, 0.87);
-        --p-text-color: var(--p-surface-700);
-        --color-card: rgba(0, 0, 0, 0.05);
-        --p-text-hover-color: var(--p-surface-0);
-        --p-text-muted-color: var(--p-surface-400);
-        --p-text-hover-muted-color: var(--p-surface-300);
-    }
+    --p-primary-color: var(--p-primary-400);
+    --p-background-color: linear-gradient(180deg, #f6f9fc 0%, #ececf9 100%);
+    --p-primary-contrast-color: var(--p-surface-900);
+    --p-primary-hover-color: var(--p-primary-300);
+    --p-primary-active-color: var(--p-primary-200);
+    --p-content-border-color: var(--p-surface-700);
+    --p-content-hover-background: var(--p-surface-800);
+    --p-content-hover-color: var(--p-surface-0);
+    --p-highlight-background: color-mix(in srgb, var(--p-primary-400), transparent 84%);
+    --p-highlight-color: rgba(255, 255, 255, 0.87);
+    --p-highlight-focus-background: color-mix(in srgb, var(--p-primary-400), transparent 76%);
+    --p-highlight-focus-color: rgba(255, 255, 255, 0.87);
+    --p-text-color: var(--p-surface-700);
+    --color-card: rgba(0, 0, 0, 0.05);
+    --p-text-hover-color: var(--p-surface-0);
+    --p-text-muted-color: var(--p-surface-400);
+    --p-text-hover-muted-color: var(--p-surface-300);
+}
+
 /* } */
 
 
 
 body {
     background: var(--p-background-color);
+    font-size: 16px;
     min-height: 100vh;
 }

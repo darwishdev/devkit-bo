@@ -78,7 +78,7 @@ const breadcrumbs = computed<MenuItem[]>(() => {
 });
 </script>
 <template>
-  <header class="app-nav">
+  <header class="app-header">
     <div class="header-start">
       <Breadcrumb :home="breadcrumbHome" :model="breadcrumbs" v-if="breadcrumbs.length > 0">
         <template #item="{ item, props }">
@@ -103,21 +103,24 @@ const breadcrumbs = computed<MenuItem[]>(() => {
 </template>
 
 <style>
-.app-nav {
+.app-header {
   padding: 0px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   border: 2px solid var(--color-card);
+  height: var(--p-header-height);
   border-radius: 10px;
 }
+
 .header-start {
   margin-inline-start: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .header-end {
   display: flex;
   justify-content: end;
@@ -126,44 +129,53 @@ const breadcrumbs = computed<MenuItem[]>(() => {
   gap: 8px;
   margin-inline-end: 20px;
 }
-.p-breadcrumb{
+
+.p-breadcrumb {
   background-color: transparent !important;
 }
+
 .p-breadcrumb-list .p-menuitem-link.router-link-active {
   background-color: transparent !important;
 }
-.p-breadcrumb a , .p-breadcrumb li , .p-breadcrumb span {
+
+.p-breadcrumb a,
+.p-breadcrumb li,
+.p-breadcrumb span {
   color: var(--p-text-color) !important;
   font-size: 19px;
 }
+
 @media screen and (max-width: 676px) {
-  .app-nav{
+  .app-header {
     padding: 10px;
   }
-  .app-nav .p-breadcrumb {
-      display: none;
-  }
 
-  .app-nav .logo-container {
-      margin: 0;
-  }
-
-  .app-nav .header-end {
-      min-width: auto;
-  }
-}
-@media screen and (min-width: 676px) {
-   .header-end {
-      min-width: 200px;
-  }
-}
-@media screen and (min-width: 992px) {
-  .app-nav .sidebar-toggler {
+  .app-header .p-breadcrumb {
     display: none;
   }
 
-  .app-nav .logo-container {
-      display: none !important;
+  .app-header .logo-container {
+    margin: 0;
+  }
+
+  .app-header .header-end {
+    min-width: auto;
+  }
+}
+
+@media screen and (min-width: 676px) {
+  .header-end {
+    min-width: 200px;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .app-header .sidebar-toggler {
+    display: none;
+  }
+
+  .app-header .logo-container {
+    display: none !important;
   }
 }
 </style>

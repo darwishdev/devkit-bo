@@ -28,7 +28,7 @@ const interceptor: Interceptor = (next) => async (req) => {
   }
 }
 const transport = createConnectTransport({
-  baseUrl: "http://darwishz4.duckdns.org:9090/",
+  baseUrl: import.meta.env.VITE_API_URL,
   useHttpGet: true,
   interceptors: [interceptor]
 });

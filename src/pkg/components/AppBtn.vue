@@ -3,7 +3,7 @@ import { h, useAttrs } from 'vue';
 import type { HintedString } from '@primevue/core';
 import { Button } from 'primevue';
 import AppIcon from './AppIcon.vue';
-export interface ButtonProps {
+export type AppBtnProps = {
   style?: any;
   class?: any;
   label?: string | undefined;
@@ -23,17 +23,17 @@ export interface ButtonProps {
   rounded?: boolean | undefined;
   text?: boolean | undefined;
   outlined?: boolean | undefined;
-  size?: 'small' | 'large' | undefined;
+  size?: 'small' | 'medium' | 'large' | undefined;
   variant?: 'outlined' | 'text' | 'link' | undefined;
   plain?: boolean | undefined;
   fluid?: boolean | undefined;
   unstyled?: boolean;
 }
-const props = defineProps<ButtonProps>()
+const props = defineProps<AppBtnProps>()
 const attrs = useAttrs();
 const renderIcon = () => {
   return h(
-    Button, { ...attrs, ...props },
+    Button, { ...attrs, ...props, size: props.size == 'medium' ? 'small' : props.size },
     {
       icon: () =>
         props.icon ? h(AppIcon, {

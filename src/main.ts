@@ -12,8 +12,7 @@ import ToastService from 'primevue/toastservice'
 import router from './pkg/router/router'
 import { createI18n } from 'vue-i18n'
 import { apiClient } from './pkg/api/ApiClient';
-import "./pkg/styles/main.css";
-// import Aura from '@primevue/themes/aura';
+import "./pkg/styles/style.css";
 const app = createApp(App)
 app.provide('apiClient', apiClient)
 app.use(createPinia())
@@ -32,5 +31,4 @@ app.use(createPinia())
   .use(VueQueryPlugin, {
     queryClient
   })
-
 app.mount('#app')

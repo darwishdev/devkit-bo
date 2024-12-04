@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<AppIconProps>(), {
   icon: "not_found",
   size: "small",
   iconType: "svg",
-  color: "p-text-color"
+  color: "var(--p-primary-contrast-color)"
 });
 const slots = defineSlots<AppIconSlots>();
 const loadIcon = async (): Promise<string> => {

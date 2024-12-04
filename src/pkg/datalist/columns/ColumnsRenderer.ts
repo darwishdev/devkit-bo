@@ -7,17 +7,28 @@ import { ObjectKeys } from "@/pkg/objectutils/ObjectUtils"
 
 export const renderSelectAllColumn = h(Column, {
   selectionMode: 'multiple',
+  pt: {
+    headerCell: 'transparent',
+  },
+
   headerStyle: {
     width: "3rem"
   }
 })
 export const renderExpanderColumn = h(Column, {
   expander: true,
+  pt: {
+    headerCell: 'transparent',
+  },
+
   style: "width: 3rem",
 
 })
 const actionsColumnBase = h(Column, {
   actions: 'actions',
+  pt: {
+    headerCell: 'transparent',
+  },
   class: 'actions-btns',
   headerStyle: {
     width: "3rem"
@@ -28,7 +39,7 @@ export interface ActionsColumnSlots<TRecord> {
   actions?: (props: { data: TRecord }) => VNode
   appendActions?: (props: { data: TRecord }) => VNode
 }
-const actionsColumn = <TRecord>(dataListKey: string, data: TRecord) => defineComponent({
+export const actionsColumn = <TRecord>(dataListKey: string, data: TRecord) => defineComponent({
   setup(_: unknown, { slots }: { slots: ActionsColumnSlots<TRecord> }) {
     if (slots.actions) {
       return slots.actions({ data })

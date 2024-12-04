@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import AppNavigation from './AppNavigation.vue';
 import AppHeader from './AppHeader.vue';
 import { db } from '../db/Db';
 import { apiClient } from '../api/ApiClient';
@@ -9,10 +8,13 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'primevue';
 import { useI18n } from 'vue-i18n';
 import { translationList, type SUPPORTE_LOCALES_TYPE } from '../plugins/i18n.config';
-import { provide } from 'vue';
+import AppBtn from './AppBtn.vue';
+import { useUiStore } from '../stores/ui_store';
+import AppNavigation from './AppNavigation.vue';
 const i18n = useI18n()
 const { push } = useRouter()
 const toast = useToast()
+const uiStore = useUiStore()
 const authorize = () => {
   return new Promise<void>((resolve) => {
     apiClient.authAuthorize({}).then((response: AuthAuthorizeResponse) => {
@@ -72,18 +74,24 @@ const loadIcons = () => {
 await loadLocale()
 await authorize()
 await loadIcons()
+uiStore.init()
+
 </script>
 <template>
   <Suspense>
     <template #default>
-      <div class="page-layout">
-        <!-- <h2 @click="toggleLanguage">app layout goes here</h2> -->
-        <AppNavigation />
-        <div class="page-wrapper">
-          <AppHeader />
-          <div class="page-content">
-            <RouterView />
+      <div :class="uiStore.sidebarStateValues.className">
+        <aside class="sidebar">
+          <div class="sidebar__header">
+            <strong class='logo'>APP LOGO</strong>
+            <AppBtn @click="uiStore.toggleSidebar" :key="uiStore.sidebarStateValues.iconName"
+              :icon="uiStore.sidebarStateValues.iconName" />
           </div>
+          <AppNavigation />
+        </aside>
+        <AppHeader />
+        <div class="page-content">
+          <RouterView />
         </div>
       </div>
     </template>
@@ -92,21 +100,3 @@ await loadIcons()
     </template>
   </Suspense>
 </template>
-<style>
-.page-wrapper{
-  padding: 20px;
-}
-.page-layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-@media (min-width: 676px) {
-  .page-layout {
-    padding-inline-start: var(--menu-width);
-  }
-}
-.page-content{
-  padding: 25px 0;
-}
-</style>

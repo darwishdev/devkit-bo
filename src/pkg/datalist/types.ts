@@ -2,6 +2,7 @@ import type { FormKitSchemaNode } from '@formkit/core'
 import type { VNode } from "vue"
 import type { ColumnProps } from 'primevue/column'
 import type { CallOptions } from '@connectrpc/connect'
+import type { Store } from 'pinia'
 
 type CreateHandler = {
   title: string
@@ -26,7 +27,7 @@ type UpdateHandler = {
   findRequestProperty: string
 }
 
-type DeleteRestoreHandler = {
+type DeleteHandler = {
   endpoint: string
   requestProperty: string
 }
@@ -46,7 +47,8 @@ export type ApiListOptions = {
   description: string
   createHandler?: CreateHandler
   updateHandler?: UpdateHandler
-  deleteRestoreHandler?: DeleteRestoreHandler
+  deleteRestoreHandler?: DeleteHandler
+  deleteHandler?: DeleteHandler
   importHandler?: ImportHandler
 }
 
@@ -94,7 +96,18 @@ export type AppFormSection = {
   isTitleHidden?: boolean
   isTransparent?: boolean
 }
-export interface DataListProps<TReq, TRecord> {
+export type ColumnActionsProps<TRecord> = {
+  datalistKey: string
+  data: TRecord
+  isDropdownMenu: boolean
+}
+
+export type ColumnActionsSlots<TRecord> = {
+  prependActions?: (props: { data: TRecord }) => VNode,
+  actions?: (props: { data: TRecord }) => VNode
+  appendActions?: (props: { data: TRecord }) => VNode
+}
+export type DataListProps<TReq, TRecord> = {
   context: {
     key: string,
     title: string
@@ -103,6 +116,7 @@ export interface DataListProps<TReq, TRecord> {
     initiallySelectedItems?: any[],
     fetchFn?: tableFetchFn<TReq, TRecord> | string
     records: TRecord[]
+    isActionsDropdown: boolean
     deletedRecords?: TRecord[]
     viewRouter?: TableRouter<TRecord>
     options: ApiListOptions
@@ -110,5 +124,21 @@ export interface DataListProps<TReq, TRecord> {
     formSections?: Record<string, (AppFormSection | FormKitSchemaNode[])>
     headers: Record<string, ITableHeader<TRecord>>
   }
-
+}
+export type DataListSlots<TRecord> = {
+  default(): VNode
+  start(props: { data: TRecord }): VNode
+  end(props: { data: TRecord }): VNode
+  expansion(props: { data: TRecord }): VNode
+  headerActionsStartPrepend(store: Store): VNode
+  headerActionsStartAppend(store: Store): VNode
+  headerActionsEndPrepend(store: Store): VNode
+  headerActionsEndAppend(store: Store): VNode
+  header(store: Store): VNode
+  actions(props: { data: TRecord }): VNode
+  prependActions(props: { data: TRecord }): VNode
+  appendActions(props: { data: TRecord }): VNode
+} & any
+export type DataListEmits<TRecord> = {
+  (e: 'update:selection', value: TRecord[]): void
 }
