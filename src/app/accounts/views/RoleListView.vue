@@ -19,7 +19,7 @@ const headers: Record<string, ITableHeader<AccountsSchemaRole>> = {
   'roleId': new TableHeaderText('roleId', {
     sortable: true,
     isGlobalFilter: true,
-    //router: viewRouter
+    //router: viewRoute
   }),
 
   'roleName': new TableHeaderText('roleName', {

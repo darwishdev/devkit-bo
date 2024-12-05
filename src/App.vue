@@ -11,6 +11,6 @@ import Toast from 'primevue/toast';
       <div>Loading from app..</div>
     </template>
   </Suspense>
-  <DynamicDialog />
+  <DynamicDialog :modal='true' />
   <Toast />
 </template>

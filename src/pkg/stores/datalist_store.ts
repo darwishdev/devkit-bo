@@ -8,12 +8,12 @@ import AppDialog from '../components/AppDialog.vue'
 import { ObjectKeys, subtractRecords } from '../objectutils/ObjectUtils'
 import type { ColumnProps, ColumnSlots } from 'primevue'
 import type { AppBtnProps } from '../components/AppBtn.vue'
-import { actionsColumn } from '../datalist/columns/ColumnsRenderer'
 export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineStore(`datalist-${dataLisKey}`, () => {
   let currentTableOptions = ref<ApiListOptions>({ title: dataLisKey, description: "" })
   let currentTableFormSchema: Record<string, AppFormSection | FormKitSchemaNode[]> | undefined
   let currentTableDataKey: keyof TRecord = `${dataLisKey}Id` as keyof TRecord
   let currentViewRouter: TableRouter<TRecord> | undefined
+  let filtersFormSchema: FormKitSchemaNode[]
   let currentTableActions: {
     create?: AppBtnProps,
     update?: AppBtnProps,
@@ -37,10 +37,11 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
   const deleteRestoreVaraints = computed(() => {
     const hasDeletedRecords = deletedRecordsRef.value.length > 0
     const hasSelectedData = modelSelectionRef.value.length > 0
-    if (isShowDeletedRef.value) return { hasSelectedData, hasDeletedRecords, icon: 'replay', label: 'restore', empty: "empty_records_deleted" }
+    if (isShowDeletedRef.value) return { disabled: !hasSelectedData, hasSelectedData, hasDeletedRecords, icon: 'replay', label: 'restore', empty: "empty_records_deleted" }
     return { disabled: !hasSelectedData, hasDeletedRecords, icon: 'trash', label: 'delete', empty: "empty_records" }
   })
   const currentData = computed(() => {
+
     if (isShowDeletedRef.value) return deletedRecordsRef.value
     return recordsRef.value
   })
@@ -74,30 +75,35 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
     if (currentViewRouter) {
       currentTableActions.view = {
         icon: "view_visibility",
+        class: 'glass',
         label: "view"
       }
     }
     if (options.createHandler) {
       currentTableActions.create = {
         icon: "plus",
+        class: 'glass',
         label: "create"
       }
     }
     if (options.updateHandler) {
       currentTableActions.update = {
         icon: "edit",
+        class: 'glass',
         label: "update"
       }
     }
     if (options.deleteRestoreHandler) {
       currentTableActions.deleteRestore = {
         icon: deleteRestoreVaraints.value.icon,
-        label: deleteRestoreVaraints.value.label
+        class: 'glass',
+        label: deleteRestoreVaraints.value.label,
       }
     }
     if (options.deleteHandler) {
       currentTableActions.delete = {
         icon: "trash",
+        class: 'glass',
         label: "delete"
       }
     }
@@ -199,11 +205,17 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
   }
   const deleteRestoreRecords = () => {
     const dialogProps = {
-      onConfirmed: deleteRestoreRecordsConfirmed
+      onConfirmed: deleteRestoreRecordsConfirmed,
+      modal: true
     }
     dialog.open(h(AppDialog, dialogProps, {
       default: () => h("h2", "are you sure")
-    }))
+    }), {
+      props: {
+        modal: true,
+        dismissableMask: true
+      }
+    })
   }
   const deleteRecords = () => {
     const dialogProps = {

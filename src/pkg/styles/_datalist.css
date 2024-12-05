@@ -19,3 +19,8 @@
 .p-datatable .p-paginator {
     background-color: transparent;
 }
+
+.p-menu-start div {
+    display: flex;
+    flex-direction: column;
+}

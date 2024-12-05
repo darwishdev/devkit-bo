@@ -7,7 +7,6 @@ const close = (e: any) => {
   dialogRef.value.close(e);
 };
 const confirm = () => {
-  console.log("confirimed")
   emit("confirmed", dialogRef.value);
 };
 </script>

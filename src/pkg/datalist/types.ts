@@ -99,7 +99,17 @@ export type AppFormSection = {
 export type ColumnActionsProps<TRecord> = {
   datalistKey: string
   data: TRecord
-  isDropdownMenu: boolean
+  isDropdownMenu?: boolean
+}
+export type DataListHeaderProps = {
+  datalistKey: string
+  exportable?: boolean
+}
+export type DataListHeaderSlots = {
+  headerActionsStartPrepend(store: Store): VNode
+  headerActionsStartAppend(store: Store): VNode
+  headerActionsEndPrepend(store: Store): VNode
+  headerActionsEndAppend(store: Store): VNode
 }
 
 export type ColumnActionsSlots<TRecord> = {
@@ -116,7 +126,7 @@ export type DataListProps<TReq, TRecord> = {
     initiallySelectedItems?: any[],
     fetchFn?: tableFetchFn<TReq, TRecord> | string
     records: TRecord[]
-    isActionsDropdown: boolean
+    isActionsDropdown?: boolean
     deletedRecords?: TRecord[]
     viewRouter?: TableRouter<TRecord>
     options: ApiListOptions
