@@ -8,7 +8,10 @@ import Toast from 'primevue/toast';
       <RouterView />
     </template>
     <template #fallback>
-      <div>Loading from app..</div>
+      <div class="loading">
+        <h2 style="color : red">loadddinggg</h2>
+        <div>Loading from app..</div>
+      </div>
     </template>
   </Suspense>
   <DynamicDialog :modal='true' />

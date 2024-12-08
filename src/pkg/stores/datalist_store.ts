@@ -1,19 +1,23 @@
-import { ref, computed, h, inject } from 'vue'
+import { ref, computed, h, inject, type VNode } from 'vue'
 import type { FormKitSchemaNode } from '@formkit/core'
 import { defineStore } from 'pinia'
 import type { ApiListOptions, AppFormSection, DataListProps, DataListSlots, ITableHeader, tableFetchFn, TableRouter } from '../datalist/types'
 import { useRouter } from 'vue-router'
 import { useDialog, type DataTableMethods } from 'primevue'
 import AppDialog from '../components/AppDialog.vue'
+import type { DataTableFilterMetaData } from 'primevue/datatable';
 import { ObjectKeys, subtractRecords } from '../objectutils/ObjectUtils'
-import type { ColumnProps, ColumnSlots } from 'primevue'
+import type { ColumnNode, ColumnProps, ColumnSlots } from 'primevue'
 import type { AppBtnProps } from '../components/AppBtn.vue'
-export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineStore(`datalist-${dataLisKey}`, () => {
+import { useDebounceFn } from '@vueuse/core'
+import { RouteQueryAppend } from '../queryutils/QueryUtils'
+export const useDataListStore = <TReq, TRecord extends Record<string, unknown>>(dataLisKey: string) => defineStore(`datalist-${dataLisKey}`, () => {
   let currentTableOptions = ref<ApiListOptions>({ title: dataLisKey, description: "" })
   let currentTableFormSchema: Record<string, AppFormSection | FormKitSchemaNode[]> | undefined
   let currentTableDataKey: keyof TRecord = `${dataLisKey}Id` as keyof TRecord
   let currentViewRouter: TableRouter<TRecord> | undefined
-  let filtersFormSchema: FormKitSchemaNode[]
+  let filtersFormSchema: FormKitSchemaNode[] = []
+  let currentIsPresistFilters: boolean | undefined
   let currentTableActions: {
     create?: AppBtnProps,
     update?: AppBtnProps,
@@ -24,6 +28,8 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
   } = {}
   let currentTableFetchFn: tableFetchFn<TReq, TRecord> | undefined
   let currentTableColumns: { props: ColumnProps, slots: Partial<ColumnSlots> }[] = []
+  let currentDebounceInMilliSeconds = 1000
+  const filtersFormKey = `${dataLisKey}-filters`
   const recordsRef = ref<TRecord[]>([])
   const isLoadingRef = ref(false)
   const tableElementRef = ref<DataTableMethods>()
@@ -31,7 +37,7 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
   const isShowDeletedRef = ref(false)
   const apiClient = inject('apiClient') as Record<string, Function>
   const modelSelectionRef = ref<TRecord[]>([])
-  const modelFiltersRef = ref({})
+  const modelFiltersRef = ref<Record<string, DataTableFilterMetaData>>({})
   const { push } = useRouter()
   const dialog = useDialog()
   const deleteRestoreVaraints = computed(() => {
@@ -40,17 +46,47 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
     if (isShowDeletedRef.value) return { disabled: !hasSelectedData, hasSelectedData, hasDeletedRecords, icon: 'replay', label: 'restore', empty: "empty_records_deleted" }
     return { disabled: !hasSelectedData, hasDeletedRecords, icon: 'trash', label: 'delete', empty: "empty_records" }
   })
-  const currentData = computed(() => {
+  const activeFilters = computed<{ input: string, value: string }[]>(() => {
+    const activeFiltersArr = []
+    const filtersFormKeys = ObjectKeys(modelFiltersRef.value)
+    for (const dataHeaderKey of filtersFormKeys) {
+      const currentInputValue = modelFiltersRef.value[dataHeaderKey]
+      if (currentInputValue.value) activeFiltersArr.push({ input: dataHeaderKey, value: currentInputValue.value })
+    }
+    return activeFiltersArr
+  })
 
+  const currentData = computed(() => {
     if (isShowDeletedRef.value) return deletedRecordsRef.value
     return recordsRef.value
   })
-
-  const extractTableColumns = (headers: Record<string, ITableHeader<TRecord>>, slots: DataListSlots<TRecord>) => {
+  const removeFilter = (filterKey: string) => {
+    if (!modelFiltersRef.value[filterKey]) return
+    modelFiltersRef.value[filterKey].value = null
+  }
+  const applyFilters = (filtersFormValue: Record<string, any>) => {
+    const filtersFormKeys = ObjectKeys(filtersFormValue)
+    const urlQuery: Record<string, string> = {}
+    const newModelValue: Record<string, DataTableFilterMetaData> = {}
+    for (const dataHeaderKey of filtersFormKeys) {
+      const currentInputValue = filtersFormValue[dataHeaderKey]
+      newModelValue[dataHeaderKey] = { value: currentInputValue, matchMode: modelFiltersRef.value[dataHeaderKey].matchMode }
+      if (currentInputValue) {
+        urlQuery[dataHeaderKey] = currentInputValue
+      }
+    }
+    modelFiltersRef.value = newModelValue
+    const filtersFormValueString = JSON.stringify(urlQuery)
+    RouteQueryAppend(filtersFormKey, filtersFormValueString)
+    if (currentIsPresistFilters) {
+      localStorage.setItem(filtersFormKey, filtersFormValueString)
+    }
+  }
+  const extractTableColumns = (headers: Record<keyof TRecord & string, ITableHeader<TRecord>>, slots: DataListSlots<TRecord>) => {
     let index = 0
-    for (let dataHeaderKey in headers) {
+    for (let dataHeaderKey of ObjectKeys(headers)) {
       const currentDataHeader = headers[dataHeaderKey]
-      const isSlotPassed = ObjectKeys(slots).includes(`items.${dataHeaderKey}`)
+      const isSlotPassed = ObjectKeys(slots).includes(`column.${dataHeaderKey}`)
       let columnSlots: Partial<ColumnSlots> | null = null
       if (typeof currentDataHeader.renderHtml == 'function') {
         const renderFunc = currentDataHeader.renderHtml
@@ -58,15 +94,23 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
           body: ({ data }) => [renderFunc(data)],
         }
       }
-      const bodySlot = isSlotPassed ? slots[`items.${dataHeaderKey}`] : columnSlots ? columnSlots.body : undefined
+
+      const bodySlot = isSlotPassed
+        ? (slots[`column.${dataHeaderKey}`] as ((scope: { data: any; node: any; column: ColumnNode; field: string; index: number; frozenRow: boolean; editorInitCallback: (event: Event) => void; rowTogglerCallback: (event: Event) => void }) => VNode[]))
+        : columnSlots
+          ? columnSlots.body
+          : undefined;
       const currentColumnProps = {
         field: dataHeaderKey,
         header: dataHeaderKey,
-        filterField: dataHeaderKey,
       }
       currentTableColumns[index] = {
         slots: { body: bodySlot },
         props: currentColumnProps
+      }
+      if (currentDataHeader.filter) {
+        filtersFormSchema[index] = currentDataHeader.filter.input
+        modelFiltersRef.value[dataHeaderKey] = { matchMode: currentDataHeader.filter.matchMode, value: null }
       }
       index++
     }
@@ -111,13 +155,15 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
   }
   const init = (props: DataListProps<TReq, TRecord>, slots: DataListSlots<TRecord>) => {
     return new Promise<void>((resolve) => {
-      const { options, records, viewRouter, headers, deletedRecords, dataKey, formSections, fetchFn, initiallySelectedItems } = props.context
+      const { options, records, viewRouter, debounceInMilliSeconds, isPresistFilters, headers, deletedRecords, dataKey, formSections, fetchFn, initiallySelectedItems } = props.context
       recordsRef.value = records
       deletedRecordsRef.value = deletedRecords || []
       if (initiallySelectedItems) modelSelectionRef.value = initiallySelectedItems
       currentTableOptions.value = options
       currentTableFormSchema = formSections
       currentTableDataKey = dataKey
+      currentIsPresistFilters = isPresistFilters
+      if (debounceInMilliSeconds) currentDebounceInMilliSeconds = debounceInMilliSeconds
       currentViewRouter = viewRouter
       if (typeof fetchFn == 'string') {
         currentTableFetchFn = apiClient[fetchFn] as tableFetchFn<TReq, TRecord>
@@ -163,7 +209,15 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
     }
     push({ name: currentTableOptions.value.createHandler.routeName })
   }
+  const setIsShowDeletedRef = (value: boolean) => {
+    isLoadingRef.value = true
+    useDebounceFn(() => {
+      console.log("calling the dbooo")
+      isShowDeletedRef.value = value
+      isLoadingRef.value = false
+    }, currentDebounceInMilliSeconds)()
 
+  }
 
   const deleteRestoreRecordsConfirmed = (dialogRef: { close: Function }) => {
     const handler = currentTableOptions.value.deleteRestoreHandler
@@ -243,13 +297,19 @@ export const useDataListStore = <TReq, TRecord>(dataLisKey: string) => defineSto
     isShowDeletedRef,
     currentTableColumns,
     init,
+    removeFilter,
     modelFiltersRef,
+    filtersFormSchema,
     viewRecord,
     isLoadingRef,
+    setIsShowDeletedRef,
     deleteRecords,
     modelSelectionRef,
+    activeFilters,
+    applyFilters,
+    currentDebounceInMilliSeconds,
     exportRecords,
     currentTableActions
   }
 })
-export const useDataListStoreWithKey = (dataListKey: string) => useDataListStore(dataListKey)()
+export const useDataListStoreWithKey = <TReq, TRecord>(dataListKey: string) => useDataListStore<Treq, Trecod>(dataListKey)()

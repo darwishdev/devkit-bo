@@ -46,13 +46,7 @@ const renderHeader = (): VNode => {
       variant.hasDeletedRecords ? h(ToggleSwitch, {
         type: 'toggle',
         modelValue: dataListStore.isShowDeletedRef,
-        onValueChange: (v: boolean) => {
-          dataListStore.isLoadingRef = true
-          useDebounceFn(() => {
-            dataListStore.isShowDeletedRef = v
-            dataListStore.isLoadingRef = false
-          }, 1000)()
-        }
+        onValueChange: dataListStore.setIsShowDeletedRef,
       }) : undefined,
       exportable ? h(ExportBtn) : undefined,
     ])

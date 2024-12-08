@@ -24,3 +24,21 @@
     display: flex;
     flex-direction: column;
 }
+
+.filters-toggler,
+.filters-toggler button {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.filters-toggler button {
+    justify-content: flex-end;
+    padding: var(--p-content-padding);
+}
+
+.filters-toggler button:hover {
+    cursor: pointer;
+    background: transparent !important;
+}

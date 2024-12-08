@@ -1,16 +1,17 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="TReq,TRecord extends Record<string, unknown>">
 import { h } from 'vue';
 import type { DataListEmits, DataListProps, DataListSlots } from './types';
 import DataTable from 'primevue/datatable';
 import { useDataListStoreWithKey } from '../stores/datalist_store';
 import { Column } from 'primevue';
-import { renderSelectAllColumn } from './columns/ColumnsRenderer';
 import ColumnActions from './ColumnActions.vue';
 import DataListHeader from './DataListHeader.vue';
-const props = defineProps<DataListProps<unknown, unknown>>()
-const slots = defineSlots<DataListSlots<unknown>>()
-const emit = defineEmits<DataListEmits<unknown>>();
-const dataListStore = useDataListStoreWithKey(props.context.key)
+import { FormKitSchema } from '@formkit/vue';
+import DataListFilters from './DataListFilters.vue';
+const props = defineProps<DataListProps<TReq, TRecord>>()
+const slots = defineSlots<DataListSlots<TRecord>>()
+const emit = defineEmits<DataListEmits<TRecord>>();
+const dataListStore = useDataListStoreWithKey<TReq, TRecord>(props.context.key)
 await dataListStore.init(props, slots)
 const renderColumnActions = () => {
   return h(Column,
@@ -38,8 +39,16 @@ const currentDataColumns = dataListStore.currentTableColumns.map((item) => h(Col
     headerCell: 'transparent',
   }
 }, item.slots))
+const selectAllColumn = h(Column, {
+  selectionMode: 'multiple',
+  pt: {
+    headerCell: 'transparent',
+  }
+
+})
 const renderDataList = () => {
   console.log("rendere whole")
+  console.log(dataListStore.filtersFormSchema)
   return h(
     DataTable,
     {
@@ -47,6 +56,10 @@ const renderDataList = () => {
       rows: 10,
       ref: 'tableEmelentRef',
       maxHeight: 200,
+      filters: dataListStore.modelFiltersRef,
+      "onUpdate:filters": (e: Event) => {
+        console.log('upadat filters', e)
+      },
       paginator: true,
       loading: dataListStore.isLoadingRef,
       pt: {
@@ -64,10 +77,16 @@ const renderDataList = () => {
         "FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown",
     },
     {
-      default: () => [renderSelectAllColumn, ...currentDataColumns, renderColumnActions()],
-      header: () => slots.header ? slots.header(dataListStore) : [h(DataListHeader, { datalistKey: props.context.key, exportable: props.context.exportable }, slots)],
+      default: () => [selectAllColumn, ...currentDataColumns, renderColumnActions()],
+      header: () => slots.header ?
+        slots.header(dataListStore) :
+        [
+          h(DataListHeader, { datalistKey: props.context.key, exportable: props.context.exportable }, slots),
+          h(DataListFilters, { datalistKey: props.context.key, isPresistFilters: props.context.isPresistFilters, useLazyFilters: props.context.useLazyFilters }, slots)
+        ],
     }
   );
+  //h('div' , {} , {})
 }
 </script>
 <template>

@@ -42,7 +42,7 @@ const renderActions = () => {
       popup: true
     },
       {
-        start: () => h('div', [actions, deleteRestoreBtn, deleteBtn, appendActions]),
+        start: () => slots.dropdownActions ? slots.dropdownActions({ data }) : h('div', [actions, deleteRestoreBtn, deleteBtn, appendActions]),
       }
     )
   ])

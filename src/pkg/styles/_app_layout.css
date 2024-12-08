@@ -14,6 +14,7 @@ aside.sidebar:hover {
     --p-submenu-padding: 1rem;
 }
 
+/* set the page style on diffrent states */
 .page-content,
 .app-header {
     margin: var(--p-content-padding);
@@ -26,7 +27,6 @@ aside.sidebar:hover {
     .p-panelmenu-submenu {
         padding-inline-start: var(--p-submenu-padding);
     }
-
 }
 
 .p-panelmenu-header-active {
@@ -44,6 +44,7 @@ aside.sidebar {
     height: 100vh;
     inset-inline-start: 0;
     width: var(--p-menu-width);
+    transition: width .2s;
     padding: var(--p-content-padding);
     border-right: 1px solid var(--p-menu-border-color);
     position: fixed;
