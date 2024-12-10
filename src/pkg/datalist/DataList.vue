@@ -1,18 +1,17 @@
-<script setup lang="ts">
-import { h, type VNode } from 'vue';
+<script setup lang="ts" generic="TReq,TRecord extends Record<string, unknown>">
+import { h } from 'vue';
 import type { DataListEmits, DataListProps, DataListSlots } from './types';
-import { useDebounceFn } from '@vueuse/core'
 import DataTable from 'primevue/datatable';
 import { useDataListStoreWithKey } from '../stores/datalist_store';
-import { Column, ToggleSwitch } from 'primevue';
-import { CreateBtn, ExportBtn } from './columns/BtnsRenderer';
-import AppBtn from '../components/AppBtn.vue';
-import { RenderActionsColumn, renderSelectAllColumn } from './columns/ColumnsRenderer';
+import { Column } from 'primevue';
 import ColumnActions from './ColumnActions.vue';
-const props = defineProps<DataListProps<unknown, unknown>>()
-const slots = defineSlots<DataListSlots<unknown>>()
-const emit = defineEmits<DataListEmits<unknown>>();
-const dataListStore = useDataListStoreWithKey(props.context.key)
+import DataListHeader from './DataListHeader.vue';
+import { FormKitSchema } from '@formkit/vue';
+import DataListFilters from './DataListFilters.vue';
+const props = defineProps<DataListProps<TReq, TRecord>>()
+const slots = defineSlots<DataListSlots<TRecord>>()
+const emit = defineEmits<DataListEmits<TRecord>>();
+const dataListStore = useDataListStoreWithKey<TReq, TRecord>(props.context.key)
 await dataListStore.init(props, slots)
 const renderColumnActions = () => {
   return h(Column,
@@ -25,88 +24,31 @@ const renderColumnActions = () => {
       headerStyle: {
         width: "1rem"
       },
-
     },
     {
       body: slots.actions ? slots.actions : (context: { data: any }) => h(ColumnActions, {
         data: context.data,
-        isDropdownMenu: true,
+        isDropdownMenu: props.context.isActionsDropdown,
         datalistKey: props.context.key
-      })
+      }, slots)
     }
   )
-}
-const renderHeader = (): VNode => {
-  const startActions: VNode[] = []
-  console.log("renderening header")
-  const endActions: VNode[] = []
-  const { exportable, options } = props.context
-  const { createHandler, deleteRestoreHandler } = options
-  if (slots.header) {
-    return slots.header(dataListStore)
-  }
-  if (slots.headerActionsStartPrepend) {
-    startActions[0] = slots.headerActionsStartAppend(dataListStore)
-  }
-  if (slots.headerActionsEndPrepend) {
-    endActions[0] = slots.headerActionsStartAppend(dataListStore)
-  }
-  if (createHandler) {
-    startActions.push(h(CreateBtn, { onClick: dataListStore.createNewRecord }))
-  }
-  const variant = dataListStore.deleteRestoreVaraints
-
-  console.log("renderening header", variant, dataListStore.isShowDeletedRef)
-  if (deleteRestoreHandler) {
-    startActions.push(h(AppBtn, { ...variant, onClick: dataListStore.deleteRestoreRecords }))
-  }
-
-
-  if (variant.hasDeletedRecords) {
-    const modelValue = dataListStore.isShowDeletedRef
-    endActions.push(h(ToggleSwitch, {
-      type: 'toggle',
-      modelValue,
-      onValueChange: (v: boolean) => {
-        dataListStore.isLoadingRef = true
-        useDebounceFn(() => {
-          dataListStore.isShowDeletedRef = v
-          dataListStore.isLoadingRef = false
-        }, 1000)()
-      }
-    }))
-  }
-  if (exportable) {
-    endActions.push(ExportBtn)
-  }
-  if (slots.headerActionsStartAppend) {
-    startActions.push(slots.headerActionsStartAppend(dataListStore))
-  }
-  if (slots.headerActionsEndAppend) {
-    endActions.push(slots.headerActionsStartAppend(dataListStore))
-  }
-
-
-  //if ()
-  return h('div', {
-    class: "table-actions"
-  }, [
-    h('div', {
-      class: 'start'
-    }, startActions),
-    h('div', {
-      class: 'end'
-    }, endActions)
-  ])
 }
 const currentDataColumns = dataListStore.currentTableColumns.map((item) => h(Column, {
   ...item.props, pt: {
     headerCell: 'transparent',
   }
 }, item.slots))
+const selectAllColumn = h(Column, {
+  selectionMode: 'multiple',
+  pt: {
+    headerCell: 'transparent',
+  }
+
+})
 const renderDataList = () => {
-  console.log("props", props)
   console.log("rendere whole")
+  console.log(dataListStore.filtersFormSchema)
   return h(
     DataTable,
     {
@@ -114,6 +56,10 @@ const renderDataList = () => {
       rows: 10,
       ref: 'tableEmelentRef',
       maxHeight: 200,
+      filters: dataListStore.modelFiltersRef,
+      "onUpdate:filters": (e: Event) => {
+        console.log('upadat filters', e)
+      },
       paginator: true,
       loading: dataListStore.isLoadingRef,
       pt: {
@@ -131,11 +77,16 @@ const renderDataList = () => {
         "FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown",
     },
     {
-      default: () => [renderSelectAllColumn, ...currentDataColumns, renderColumnActions()],
-
-      header: () => [renderHeader()],
+      default: () => [selectAllColumn, ...currentDataColumns, renderColumnActions()],
+      header: () => slots.header ?
+        slots.header(dataListStore) :
+        [
+          h(DataListHeader, { datalistKey: props.context.key, exportable: props.context.exportable }, slots),
+          h(DataListFilters, { datalistKey: props.context.key, isPresistFilters: props.context.isPresistFilters, useLazyFilters: props.context.useLazyFilters }, slots)
+        ],
     }
   );
+  //h('div' , {} , {})
 }
 </script>
 <template>

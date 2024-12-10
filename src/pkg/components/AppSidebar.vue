@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import AppNavigation from './AppNavigation.vue';
 import AppBtn from './AppBtn.vue';
+
 const isMenuOpened = ref(false);
 const menuStateValues = computed(() => isMenuOpened.value ? { iconName: 'lock', className: 'sidebar active-menu' } : { iconName: 'unlock', className: 'sidebar' })
 const toggleDesktopMenu = () => {
@@ -19,12 +20,6 @@ const toggleDesktopMenu = () => {
 </template>
 
 <style>
-aside.sidebar {
-  position: absolute;
-  left: 0;
-  height: 100vh;
-}
-
 .app-layout {
   --menu-width: var(--menu-width-closed);
 }

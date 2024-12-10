@@ -14,3 +14,7 @@
     backdrop-filter: blur(10px);
     border-color: var(--p-glass);
 }
+
+.text-white span {
+    color: white;
+}

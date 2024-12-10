@@ -17,6 +17,6 @@ uiStore.init()
       </div>
     </template>
   </Suspense>
-  <DynamicDialog />
+  <DynamicDialog :modal='true' />
   <Toast />
 </template>

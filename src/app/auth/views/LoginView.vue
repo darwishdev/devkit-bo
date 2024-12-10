@@ -11,10 +11,7 @@ const toast = useToast()
 onBeforeMount(() => {
   const token = localStorage.getItem("token")
   if (token) {
-    apiClient.authAuthorize({}).then((_) => {
-      toast.add({ severity: 'error', summary: 'Error', detail: 'Please logout first before try to login again', life: 3000 });
-      push({ name: "home_view" })
-    })
+    console.log("user have token")
   }
 })
 const handleLoginCallback = (response: AuthLoginResponse) => {

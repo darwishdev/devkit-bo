@@ -12,12 +12,6 @@ type CreateHandler = {
 }
 
 
-export type DataListWrapperProps = {
-  records: Array<any>; // Adjust this type based on your data structure
-  selection: any; // Adjust type if you have a specific selection type
-  onSelectionUpdate: (selection: any) => void; // Callback type
-}
-
 type UpdateHandler = {
   title: string
   redirectRoute: string
@@ -99,24 +93,53 @@ export type AppFormSection = {
 export type ColumnActionsProps<TRecord> = {
   datalistKey: string
   data: TRecord
-  isDropdownMenu: boolean
+  isDropdownMenu?: boolean
+}
+export type DataListHeaderProps = {
+  datalistKey: string
+  exportable?: boolean
+}
+export type DataListFiltersProps = {
+  datalistKey: string
+  isPresistFilters?: boolean
+  useLazyFilters?: boolean
+  isServerSidePagination?: boolean
+}
+
+export type DataListFiltersSlots = {
+  filtersForm(store: Store): VNode
+  filtersFormAppend(store: Store): VNode
+  filtersFormPrepend(store: Store): VNode
+  header(store: Store): VNode
+}
+export type DataListHeaderSlots = {
+  headerActionsStartPrepend(store: Store): VNode
+  headerActionsStartAppend(store: Store): VNode
+  headerActionsEndPrepend(store: Store): VNode
+  headerActionsEndAppend(store: Store): VNode
 }
 
 export type ColumnActionsSlots<TRecord> = {
   prependActions?: (props: { data: TRecord }) => VNode,
+  dropdownActions(props: { data: TRecord }): VNode
   actions?: (props: { data: TRecord }) => VNode
   appendActions?: (props: { data: TRecord }) => VNode
 }
-export type DataListProps<TReq, TRecord> = {
+export interface DataListProps<TReq, TRecord> {
   context: {
-    key: string,
+    key: string
     title: string
     dataKey: keyof TRecord
     exportable?: boolean
-    initiallySelectedItems?: any[],
+    initiallySelectedItems?: any[]
+    debounceInMilliSeconds?: number
     fetchFn?: tableFetchFn<TReq, TRecord> | string
     records: TRecord[]
-    isActionsDropdown: boolean
+    useColumnFilters?: boolean
+    useLazyFilters?: boolean
+    isServerSidePagination?: boolean
+    isActionsDropdown?: boolean
+    isPresistFilters?: boolean
     deletedRecords?: TRecord[]
     viewRouter?: TableRouter<TRecord>
     options: ApiListOptions
@@ -134,11 +157,18 @@ export type DataListSlots<TRecord> = {
   headerActionsStartAppend(store: Store): VNode
   headerActionsEndPrepend(store: Store): VNode
   headerActionsEndAppend(store: Store): VNode
+  filtersPanel(store: Store): VNode
+  filtersForm(store: Store): VNode
+  filtersFormAppend(store: Store): VNode
+  filtersFormPrepend(store: Store): VNode
   header(store: Store): VNode
+  dropdownActions(props: { data: TRecord }): VNode
   actions(props: { data: TRecord }): VNode
   prependActions(props: { data: TRecord }): VNode
   appendActions(props: { data: TRecord }): VNode
-} & any
+} & {
+  [K in keyof TRecord as K extends string ? `column.${K}` : never]: (props: { data: TRecord }) => VNode;
+};
 export type DataListEmits<TRecord> = {
   (e: 'update:selection', value: TRecord[]): void
 }

@@ -98,9 +98,9 @@ const breadcrumbs = computed<MenuItem[]>(() => {
       </Breadcrumb>
     </div>
     <div class="header-end">
-      <AppBtn @click="toggleLanguage" icon="globe" />
-      <AppBtn @click="toggleTheme" icon="moon" />
-      <AppBtn icon="single_user" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" />
+      <AppBtn class="glass" @click="toggleLanguage" icon="globe" />
+      <AppBtn class="glass" @click="toggleTheme" icon="moon" />
+      <AppBtn class="glass" icon="single_user" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" />
       <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
     </div>
   </header>
@@ -115,6 +115,7 @@ const breadcrumbs = computed<MenuItem[]>(() => {
   flex-wrap: wrap;
   border: 2px solid var(--color-card);
   height: var(--p-header-height);
+  border: 1px solid var(--p-glass);
   border-radius: 10px;
 }
 

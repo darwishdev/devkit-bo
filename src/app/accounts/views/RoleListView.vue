@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { apiClient } from "@/pkg/api/ApiClient"
 import DataList from "@/pkg/datalist/DataList.vue";
-import type { TableRouter, ITableHeader, DataListProps } from "@/pkg/datalist/types";
+import type { TableRouter, ITableHeader, DataListProps, tableFetchFn } from "@/pkg/datalist/types";
 import { useI18n } from "vue-i18n";
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import type { AccountsSchemaRole, RoleListRequest } from "@buf/ahmeddarwish_devkit-api.bufbuild_es/devkit/v1/accounts_role_pb";
@@ -19,7 +19,7 @@ const headers: Record<string, ITableHeader<AccountsSchemaRole>> = {
   'roleId': new TableHeaderText('roleId', {
     sortable: true,
     isGlobalFilter: true,
-    //router: viewRouter
+    //router: viewRoute
   }),
 
   'roleName': new TableHeaderText('roleName', {
@@ -46,14 +46,12 @@ const headers: Record<string, ITableHeader<AccountsSchemaRole>> = {
         $formkit: 'text',
         prefixIcon: "tools",
         outerClass: "col-12 sm:col-6 md:col-3",
-        name: "roleName",
-        placeholder: t("roleName")
+        name: "roleDescription",
+        placeholder: t("roleDescription")
       }
     }
   }),
 }
-
-
 
 const tableProps: DataListProps<RoleListRequest, AccountsSchemaRole> = {
   context: {
@@ -62,15 +60,18 @@ const tableProps: DataListProps<RoleListRequest, AccountsSchemaRole> = {
     dataKey: "roleId",
     records: records,
     exportable: true,
+    useLazyFilters: false,
+    isActionsDropdown: true,
     deletedRecords: deletedRecords,
     // viewRouter: viewRouter,
     //displayType: "card",
     fetchFn: apiClient.roleList,
-    options: options! as any,
+    options: options!,
     headers
   }
 }
 </script>
 <template>
-  <DataList :context="tableProps.context" />
+  <DataList :context="tableProps.context">
+  </DataList>
 </template>

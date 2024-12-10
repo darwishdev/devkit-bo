@@ -74,6 +74,7 @@ const loadIcons = () => {
     })
   })
 }
+
 await loadLocale()
 await authorize()
 await loadIcons()

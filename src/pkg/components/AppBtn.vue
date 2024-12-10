@@ -18,6 +18,7 @@ export type AppBtnProps = {
   loadingIcon?: string | undefined;
   asChild?: boolean | undefined;
   link?: boolean | undefined;
+  disabled?: boolean;
   severity?: HintedString<'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast'> | undefined;
   raised?: boolean | undefined;
   rounded?: boolean | undefined;

@@ -14,7 +14,7 @@ export type AppIconSlots = {
   top(): VNode;
 }
 const props = withDefaults(defineProps<AppIconProps>(), {
-  icon: "not_found",
+  icon: "default",
   size: "small",
   iconType: "svg",
   color: "var(--p-primary-contrast-color)"
@@ -24,12 +24,12 @@ const loadIcon = async (): Promise<string> => {
   return new Promise((resolve) => {
     db.icon.get(props.icon).then((icon?: Icon) => {
       if (!icon) {
-        resolve(`not found`)
+        resolve(`default`)
         return
       }
       resolve(icon.iconContent)
     }).catch((_) => {
-      resolve('not found')
+      resolve('default')
     })
   })
 }
