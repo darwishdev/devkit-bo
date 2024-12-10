@@ -11,6 +11,7 @@ import { translationList, type SUPPORTE_LOCALES_TYPE } from '../plugins/i18n.con
 import AppBtn from './AppBtn.vue';
 import { useUiStore } from '../stores/ui_store';
 import AppNavigation from './AppNavigation.vue';
+import AppLayoutLoading from './Loading/AppLayoutLoading.vue';
 const i18n = useI18n()
 const { push } = useRouter()
 const toast = useToast()
@@ -21,7 +22,9 @@ const authorize = () => {
       if (response.user) {
         localStorage.setItem("user", JSON.stringify(response.user))
       }
-      resolve()
+      // setTimeout(() => {
+        resolve()
+      // }, 3000);
     }).catch(() => {
       toast.add({ severity: 'error', summary: 'Error', detail: 'Please login to be able to view this page', life: 3000 });
       localStorage.removeItem('user')
@@ -50,12 +53,12 @@ const toggleLanguage = () => {
 
 const loadLocale = () => {
   return new Promise<void>((resolve) => {
-    const locale = i18n.locale.value as SUPPORTE_LOCALES_TYPE
-    console.log("localse s", locale)
-    translationList(locale).then(response => {
-      i18n.setLocaleMessage(locale, response)
-      resolve()
-    }).catch(() => resolve())
+      const locale = i18n.locale.value as SUPPORTE_LOCALES_TYPE
+      console.log("localse s", locale)
+      translationList(locale).then(response => {
+        i18n.setLocaleMessage(locale, response)
+        resolve()
+      }).catch(() => resolve())
   })
 }
 const loadIcons = () => {
@@ -74,8 +77,6 @@ const loadIcons = () => {
 await loadLocale()
 await authorize()
 await loadIcons()
-uiStore.init()
-
 </script>
 <template>
   <Suspense>
@@ -96,7 +97,7 @@ uiStore.init()
       </div>
     </template>
     <template #fallback>
-      <div>Loading from layoututttsss...</div>
+        <AppLayoutLoading></AppLayoutLoading>
     </template>
   </Suspense>
 </template>

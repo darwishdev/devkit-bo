@@ -50,7 +50,11 @@ const breadcrumbHome = {
 }
 const toggleTheme = () => {
   document.documentElement.classList.toggle('my-app-dark');
-  console.log("toggling theme")
+  if(localStorage.getItem('preferred-theme') && localStorage.getItem('preferred-theme') == 'light'){
+    localStorage.setItem('preferred-theme' , 'dark')
+    return
+  }
+  localStorage.setItem('preferred-theme' , 'light')
 }
 const toggleLanguage = () => {
   const currentLocale = i18n.locale.value as SUPPORTE_LOCALES_TYPE

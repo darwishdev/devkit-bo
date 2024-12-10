@@ -8,6 +8,10 @@ export const useUiStore = defineStore(`ui`, () => {
     isSidebarOpenedRef.value = !isSidebarOpenedRef.value
   }
   const init = () => {
+    const currentTheme : 'light' | 'dark' | null = localStorage.getItem('preferred-theme') as any
+    if(!currentTheme || (currentTheme && currentTheme == 'dark')){
+      document.documentElement.classList.toggle('my-app-dark')
+    }
     const isSidebarOpened = localStorage.getItem('is_sidebar_opened')
     isSidebarOpenedRef.value = isSidebarOpened == 'true'
   }

@@ -24,7 +24,15 @@ const { data, suspense } = useQuery({
   suspense: true,
   queryFn: async () => apiClient.iconList({}),
 })
+const loading = async () => {
+  return new Promise((resolve) => {
+  setTimeout(() => {
+      resolve('hey')
+  }, 10000);
+  })
+}
 await suspense()
+await loading()
 </script>
 <template>
   <AppBtn label="show toast" @click="showProducts" />

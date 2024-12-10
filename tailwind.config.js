@@ -3,6 +3,8 @@ const primeui = require('tailwindcss-primeui');
 export default {
   content: [
     "./index.html",
+    "./formkit.theme.ts",
+    "./formkit.config.ts",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
@@ -14,6 +16,7 @@ export default {
         '2xl': '1920px'
     }
   },
+  darkMode: ['selector', '[class*="my-app-dark"]'],
   plugins: [primeui],
 }
 

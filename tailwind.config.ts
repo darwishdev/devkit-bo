@@ -4,6 +4,7 @@ export default {
   content: [
     "./index.html",
     "./formkit.theme.ts",
+    "./formkit.config.ts",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {

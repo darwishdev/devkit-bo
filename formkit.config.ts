@@ -5,7 +5,8 @@ import { defaultConfig } from '@formkit/vue'
 export default defaultConfig({
   locales: { en, ar },
   locale: 'en',
-  theme: 'genesis',
-  rootClasses
+  config : {
+    rootClasses
+  }
 })
 
