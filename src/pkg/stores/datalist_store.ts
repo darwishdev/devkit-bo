@@ -11,6 +11,8 @@ import type { ColumnNode, ColumnProps, ColumnSlots } from 'primevue'
 import type { AppBtnProps } from '../components/AppBtn.vue'
 import { useDebounceFn } from '@vueuse/core'
 import { RouteQueryAppend } from '../queryutils/QueryUtils'
+import AppFormDialog from '../components/AppFormDialog.vue'
+import type { AppFormDialogProps } from '../types/types'
 export const useDataListStore = <TReq, TRecord extends Record<string, unknown>>(dataLisKey: string) => defineStore(`datalist-${dataLisKey}`, () => {
   let currentTableOptions = ref<ApiListOptions>({ title: dataLisKey, description: "" })
   let currentTableFormSchema: Record<string, AppFormSection | FormKitSchemaNode[]> | undefined
@@ -183,7 +185,7 @@ export const useDataListStore = <TReq, TRecord extends Record<string, unknown>>(
       return
     }
     if (currentTableFormSchema) {
-      console.log("show the form dialog thing")
+      openUpdateFormDialog(id)
       return
     }
     const params = { id: id as string }
@@ -198,12 +200,76 @@ export const useDataListStore = <TReq, TRecord extends Record<string, unknown>>(
     params[currentViewRouter.paramName] = data[currentViewRouter.paramColumnName] as string
     push({ name: currentViewRouter.name, params: params })
   }
+
+  const openUpdateFormDialog = (id : unknown) => {
+    const appFormDialogProps: AppFormDialogProps = {
+      title : currentTableOptions.value!.updateHandler!.title,
+      sections: currentTableFormSchema!,
+      handlers : {
+        submitHandler : {
+         endpoint : apiClient[currentTableOptions.value.updateHandler!.endpoint] as any,
+        },
+        findHandler : {
+          endpoint : apiClient[currentTableOptions.value.updateHandler!.findEndpoint] as any,
+          requestPropertyName : currentTableOptions.value.updateHandler!.findRequestProperty,
+        }
+      }
+    }
+    dialog.open(h(AppFormDialog, appFormDialogProps), {
+      props: {
+        modal: true,
+        dismissableMask: true,
+        header: currentTableOptions.value.updateHandler!.title,
+        style: {
+          width: '45vw'
+        }
+      },
+      onClose : (options) => {
+        if(options && options.data && options.data.success){
+          currentTableFetchFn!({} as TReq).then((response) => {
+            recordsRef.value = response.records
+          })
+        }
+      }
+  })
+  }
+
+  const openCreateFormDialog = () => {
+    const appFormDialogProps: AppFormDialogProps = {
+      title : currentTableOptions.value!.createHandler!.title,
+      sections: currentTableFormSchema!,
+      handlers : {
+        submitHandler : {
+         endpoint : apiClient[currentTableOptions.value.createHandler!.endpoint] as any,
+        }
+      }
+    }
+    dialog.open(h(AppFormDialog, appFormDialogProps), {
+      props: {
+        modal: true,
+        dismissableMask: true,
+        header: currentTableOptions.value.createHandler!.title,
+        style: {
+          width: '45vw'
+        }
+      },
+      onClose : (options) => {
+        if(options && options.data && options.data.success){
+          currentTableFetchFn!({} as TReq).then((response) => {
+            recordsRef.value = response.records
+          })
+        }
+      }
+  })
+  }
+
   const createNewRecord = () => {
     if (!currentTableOptions.value.createHandler) {
       console.log("this should not be called")
       return
     }
     if (currentTableFormSchema) {
+      openCreateFormDialog()
       console.log("show the form dialog thing")
       return
     }
@@ -312,4 +378,4 @@ export const useDataListStore = <TReq, TRecord extends Record<string, unknown>>(
     currentTableActions
   }
 })
-export const useDataListStoreWithKey = <TReq, TRecord>(dataListKey: string) => useDataListStore<Treq, Trecod>(dataListKey)()
+export const useDataListStoreWithKey = <TReq, TRecord>(dataListKey: string) => useDataListStore<TReq, TRecord>(dataListKey)()

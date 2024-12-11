@@ -27,7 +27,7 @@ const generateFormSchema = () => {
     const sectionToBePushed: FormKitSchemaNode = {
       $el: 'div',
       attrs: {
-        class: isCurrentSectionArray ? className : `${className} ${currentSection.isTransparent ? ' glass' : ''}`
+        class: isCurrentSectionArray ? className : `${className} ${currentSection.isTransparent ? ' rounded-md mb-2 p-4 glass' : ''}`
       },
       children: isCurrentSectionArray ? currentSection : currentSection.inputs
 
